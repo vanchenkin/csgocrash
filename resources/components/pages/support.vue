@@ -1,3 +1,3 @@
 <template>
-  <p>This is the FAQ</p>
+	<div class="content">SUPPORT</div>
 </template>

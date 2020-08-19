@@ -1,0 +1,809 @@
+﻿@import 'reset.scss'
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800')
+
+//colors
+$c-main: #131719
+$c-sec: #202326
+$c-sec-hover: #2c3235
+$c-white: #DBDBDB
+$c-orange: #CF5100
+$c-orange-hover: #cf7f4b
+$c-green: #00AE70
+$c-green-hover: #50a783
+$c-red: #ff4528
+
+//rarity colors
+$r-white: #979797
+$r-lightblue: #99CCFF
+$r-blue: #4747FF
+$r-purple: #8848FF
+$r-pink: #FF14FF
+$r-red: #FF0000
+$r-knife: #FFD11B
+
+//coef colors
+$cf-red: $c-red //0-1.2
+$cf-orange: $c-orange //1.2-2
+$cf-pink: #f717f4 //2-4
+$cf-green: #47b17b //4-10
+$cf-gold: #fffc00 //10+
+
+//vars
+$left-width: 40rem
+$right-width: 40rem
+$header-height: 8rem
+$border-radius: 1.5rem
+
+// @media only screen and (min-width: 1023px)
+// 	html
+// 	    font-size: .54vw
+
+=transition($property)
+	-webkit-transition: $property
+	-moz-transition: $property
+	-o-transition: $property
+	transition: $property
+
+=animation($property)
+	-webkit-animation: $property
+	-moz-animation: $property
+	-o-animation: $property
+	animation: $property
+
+=transform($property)
+	-webkit-transform: $property
+	-moz-transform: $property
+	-o-transform: $property
+	transform: $property
+
+$shadow-spread: 0.5rem
+.r-white
+	filter: drop-shadow(0 0 $shadow-spread rgba($r-white, 1))
+.r-lightblue
+	filter: drop-shadow(0 0 $shadow-spread rgba($r-lightblue, 1))
+.r-blue
+	filter: drop-shadow(0 0 $shadow-spread rgba($r-blue, 1))
+.r-purple
+	filter: drop-shadow(0 0 $shadow-spread rgba($r-purple, 1))
+.r-pink
+	filter: drop-shadow(0 0 $shadow-spread rgba($r-pink, 1))
+.r-red
+	filter: drop-shadow(0 0 $shadow-spread rgba($r-red, 1))
+.r-knife
+	filter: drop-shadow(0 0 $shadow-spread rgba($r-knife, 1))
+
+.preload *
+	+transition(none !important)
+
+html
+	font-size: .54vw
+	height: 100%
+	box-sizing: border-box
+	-moz-box-sizing: border-box
+	-webkit-box-sizing: border-box
+
+body
+	font-family: 'Open Sans', sans-serif
+	font-weight: 600
+	color: $c-white
+	background-color: $c-main
+	width: 100%
+	height: 100%
+	position: absolute
+	overflow: hidden
+	top: 0
+	left: 0
+	right: 0
+	bottom: 0
+	max-height: 100vh
+
+.wrapper
+	height: 100%
+	width: 100%
+	overflow: hidden
+	display: grid
+	grid-template-columns: 1fr
+	grid-template-rows: $header-height 1fr
+
+header
+	background-color: $c-main
+	height: 8rem
+	font-size: 1.35rem
+	display: grid
+	grid-template-columns: $left-width 1fr $right-width
+	.header-logo
+		height: 100%
+		white-space: nowrap
+		display: flex
+		justify-content: space-around
+		align-items: center
+		width: $left-width
+		background-color: $c-sec
+		padding: 0 2rem
+		.logo
+			display: block
+			margin: 0 auto
+			.logo-img
+				height: 2.5rem
+				width: 20rem
+				display: block
+		.logo-elems
+			display: flex
+		.logo-elem
+			cursor: pointer
+			background-color: $c-main
+			border-radius: 0.75rem
+			padding: 1rem
+			text-align: center
+			margin-left: 1rem
+			&:hover
+				background-color: $c-sec-hover
+			.logo-icon
+				top: -0.2rem
+				position: relative
+	nav
+		display: flex
+		justify-content: space-evenly
+		width: 50rem
+		.active
+			border-bottom-color: $c-orange
+		.nav-item
+			display: flex
+			align-items: center
+			white-space: nowrap
+			color: $c-white
+			border-bottom: 0.4rem solid transparent
+			border-top: 0.4rem solid transparent
+			cursor: pointer
+			&:hover
+				border-bottom-color: $c-orange
+			.nav-icon
+				padding: 0.2rem
+	.header-main
+		display: flex
+		padding: 0 1rem
+		height: 100%
+		width: 100%
+	.header-soc
+		margin-left: auto
+		margin-right: 2rem
+		display: flex
+		text-align: center
+		align-items: center
+		.header-soc-item
+			font-size: 2rem
+			color: $c-white
+			border-radius: 1rem
+			margin: 0 0.5rem
+			display: block
+			background-color: $c-sec
+			padding: 1rem
+			&:hover
+				background-color: $c-sec-hover
+		.header-soc-online
+			margin-left: 1rem
+			font-size: 1.2rem
+			display: flex
+			flex-direction: column
+			align-items: center
+			justify-content: space-evenly
+			.online-number
+				display: flex
+				align-items: center
+				flex-direction: row
+				justify-content: center
+				margin-bottom: 0.2rem
+				color: $c-orange
+				.online-circle
+					font-size: 0.8rem
+					position: relative
+					margin-right: 0.2rem
+					+animation(blink 800ms alternate infinite)
+		.fab
+			position: relative
+			top: 0.05rem
+	.header-right
+		display: flex
+		align-items: center
+		justify-content: center
+		.header-right-image
+			border-radius: 1rem
+			width: 4rem
+			height: 4rem
+			margin-right: 1rem
+		.header-right-nameblock
+			font-size: 1.2rem
+			margin: 0 1rem
+			display: flex
+			align-items: flex-end
+			justify-content: center
+			flex-direction: column
+			.header-right-money
+				color: $c-orange
+				margin-top: 0.3rem
+			.header-right-name
+				overflow: hidden
+				text-overflow: ellipsis
+				max-width: 15rem
+		.header-right-button
+			background-color: $c-orange
+			font-size: 1.2rem
+			font-weight: 700
+			padding: 1.25rem
+			border-radius: 0.75rem
+			cursor: pointer
+			&:hover
+				background-color: $c-orange-hover
+		.header-right-icon
+			font-size: 2.5rem
+
+.steam-button
+	font-weight: 700
+	font-size: 1.5rem
+	color: white
+	display: flex
+	align-items: center
+	background-color: $c-green
+	border-radius: 0.5rem
+	padding: 1rem 2rem
+	text-align: center
+	white-space: nowrap
+	&:hover
+		background-color: $c-green-hover
+	.fa-steam-symbol
+		font-size: 3rem
+		margin-right: 2rem
+
+main
+	width: 100%
+	height: 100%
+	display: grid
+	grid-template-columns: $left-width 1fr $right-width
+	overflow: hidden
+
+.left
+	margin-top: 2rem
+	width: $left-width
+	display: flex
+	flex-direction: column
+
+.skins
+	width: 100%
+	background-color: $c-sec
+	height: 100%
+	margin-bottom: 2rem
+	border-radius: 0 $border-radius $border-radius 0
+	padding: 2rem
+	.skins-guest
+		height: 100%
+		display: flex
+		flex-direction: column
+		align-items: center
+		justify-content: center
+		.skins-guest-icon
+			font-size: 6rem
+			color: $c-white
+		.skins-guest-text
+			padding-top: 2rem
+			font-size: 1.5rem
+			font-weight: 700
+		.skins-guest-stext
+			padding-top: 1rem
+			font-size: 1.4rem
+			color: $c-white
+		.steam-button
+			margin-top: 2rem
+
+.draw
+	display: grid
+	grid-template-rows: 4rem 1fr 5rem
+	width: 100%
+	background-color: $c-sec
+	border-radius: 0 $border-radius 0 0
+	padding: 2rem
+	.draw-header
+		display: flex
+		justify-content: space-evenly
+		align-items: center
+		margin-bottom: 1rem
+		.draw-header-text
+			font-size: 1.5rem
+			font-weight: 700
+			margin: 0 1rem
+		.draw-header-time
+			color: $c-orange
+			font-size: 2rem
+			//margin-left: auto
+		.draw-header-icon
+			font-size: 2.5rem
+	.draw-body
+		display: flex
+		justify-content: space-evenly
+		height: 17rem
+		.draw-body-image
+			height: 17rem
+		.draw-body-r
+			display: flex
+			flex-direction: column
+			align-items: center
+			justify-content: center
+			.draw-body-text
+				font-size: 1.5rem
+			.draw-body-stext
+				font-size: 1.25rem
+				color: $c-orange
+				margin-top: 0.5rem
+				text-align: center
+			.draw-body-ttext
+				font-size: 1.25rem
+				color: $c-orange
+				margin-top: 0.25rem
+				text-align: center
+			.draw-body-button
+				margin-top: 2rem
+				padding: 2rem
+				background-color: $c-orange
+				font-size: 1.5rem
+				font-weight: 700
+				border-radius: 1rem
+				cursor: pointer
+				&:hover
+					background-color: $c-orange-hover
+	.draw-count
+		border-radius: 0.5rem
+		background-color: $c-main
+		display: flex
+		align-items: center
+		justify-content: space-between
+		padding: 1.5rem
+		font-size: 1.5rem
+		width: 35rem
+		margin: 0 auto
+
+.chat
+	background-color: $c-sec
+	border-radius: $border-radius 0 0 0
+	height: 100%
+	padding: 2rem
+	display: grid
+	grid-template-rows: 4rem 1fr 7rem
+	overflow: hidden
+	.chat-header
+		display: flex
+		justify-content: space-evenly
+		align-items: center
+		margin-bottom: 1rem
+		.chat-header-text
+			font-size: 1.5rem
+			font-weight: 700
+			margin: 0 1rem
+		.chat-header-rules
+			color: $c-orange
+			font-size: 1.3rem
+			text-decoration: underline
+			cursor: pointer
+			&:hover
+				color: $c-orange-hover
+		.chat-header-icon
+			font-size: 2.5rem
+	.chat-body
+		overflow: hidden
+		height: 100%
+		.chat-inner
+			display: flex
+			align-items: center
+			flex-direction: column
+			padding-bottom: 2rem
+			overflow-y: auto
+			max-height: 100%
+			min-height: 100%
+			&::-webkit-scrollbar
+				display: none
+			.chat-message
+				margin-top: auto
+				width: 100%
+				display: flex
+				flex-direction: row
+				align-items: center
+				margin: 1rem 0
+				.chat-image
+					border-radius: 1rem
+					width: 5rem
+					height: 5rem
+					margin-right: 1rem
+					margin-top: 0.5rem
+				.chat-block
+					display: flex
+					flex-direction: column
+					width: 100%
+				.chat-nameblock
+					display: flex
+					justify-content: space-between
+					margin: 0.5rem
+					font-size: 1.25rem
+					.chat-name:visited
+						color: $c-white
+				.chat-text
+					font-size: 1.2rem
+					border-radius: 0.75rem
+					padding: 1.5rem 1rem
+					background-color: $c-main
+					width: 100%
+				&:first-child
+					margin-top: auto !important
+			.reversed
+				flex-direction: row-reverse
+				.chat-image
+					margin-right: 0rem
+					margin-left: 1rem
+				.chat-nameblock
+					flex-direction: row-reverse
+	.chat-send
+		display: flex
+		align-items: center
+		justify-content: space-around
+		flex-direction: row
+		.chat-send-input
+			padding: 2rem
+			font-size: 1.2rem
+			border: 0
+			background-color: $c-main
+			border-radius: 1rem
+			color: $c-white
+			&:focus
+				outline: none
+			width: 80%
+		.chat-send-button
+			cursor: pointer
+			padding: 1rem
+			border-radius: 1rem
+			background-color: $c-orange
+			&:hover
+				background-color: $c-orange-hover
+			.chat-send-icon
+				color: white
+				font-size: 2rem
+
+.content-block
+	width: 100%
+	height: 100%
+	display: grid
+	grid-template-rows: auto auto 1fr auto
+	padding: 2rem
+	padding-top: 0
+	overflow: hidden
+	.upper
+		display: flex
+		flex-direction: row
+		justify-content: space-between
+		width: 100%
+		margin-bottom: 2rem
+		.left
+			width: 50%
+			padding-right: 2rem
+			.graph
+				height: 30rem
+				width: 100%
+				border-radius: 1rem
+				background-color: $c-sec
+			.stats
+				margin-top: 1.5rem
+				display: flex
+				width: 100%
+				border-radius: 1rem
+				background-color: $c-sec
+				overflow: hidden
+				text-align: center
+				.stats-text
+					color: white
+					display: flex
+					align-items: center
+					justify-content: center
+					height: 100%
+					background-color: $c-orange
+					background: linear-gradient(90deg, rgba($c-orange, 0.75) 0%, rgba(32,35,38,1) 100%)
+					font-size: 1.2rem
+					text-align: center
+					padding: 2rem 2rem
+					padding-right: 4.5rem
+					width: auto
+				.stats-right
+					width: 100%
+					display: flex
+					flex-direction: row
+					justify-content: space-evenly
+					.stat
+						height: 100%
+						display: flex
+						flex-direction: row
+						justify-content: space-evenly
+						align-items: center
+						font-size: 1.20rem
+						.stat-icon
+							font-size: 2.2rem
+							margin-right: 1.5rem
+						.stat-value
+							color: $c-orange
+							margin-top: 0.25rem
+							font-weight: 700
+		.right
+			width: 50%
+			display: grid
+			grid-template-rows: 1fr auto auto
+			.skin
+				width: 100%
+				margin-bottom: 1rem
+				display: flex
+				justify-content: center
+				align-items: center
+				perspective: 800px
+				.skin-circle
+					border-radius: 50%
+					position: absolute
+					z-index: 0
+					+animation(circle 1s infinite linear)
+				.skin-i1
+					width: 18rem
+					height: 18rem
+					border: 2px solid transparent
+					border-right: 4px solid $c-orange
+				.skin-i2
+					animation-delay: 100ms
+					width: 20rem
+					height: 20rem
+					border: 2px solid transparent
+					border-right: 2px solid $c-white
+				.skin-i3
+					animation-duration: 2s
+					width: 22rem
+					height: 22rem
+					border: 2px solid transparent
+					border-right: 2px solid $c-orange
+					border-left: 2px solid $c-white
+				.skin-i4
+					animation-duration: 2.2s
+					width: 24rem
+					height: 24rem
+					border: 2px solid transparent
+					border-right: 4px solid $c-orange
+				.skin-image
+					position: absolute
+					z-index: 1
+					display: block
+					margin: 0 auto
+					height: 18rem
+					width: 18rem
+			.auto-text
+				width: 100%
+				font-size: 1.3rem
+				margin-bottom: 0.75rem
+				padding-left: 1.75rem
+			.bet
+				display: flex
+				flex-direction: row
+				.bet-input
+					width: 30%
+					border: 0
+					border-radius: 1rem
+					text-align: center
+					font-size: 2rem
+					padding: 1.5rem 2rem
+					color: $c-white
+					background-color: $c-sec
+				.bet-button
+					display: flex
+					justify-content: space-between
+					align-items: center
+					width: 100%
+					border-radius: 1rem
+					margin-left: 1rem
+					background-color: $c-orange
+					font-weight: 700
+					font-size: 1.6rem
+					padding: 0 2rem
+					cursor: pointer
+					&:hover
+						background-color: $c-orange-hover
+			.autos
+				margin-top: 1.5rem
+				display: flex
+				justify-content: space-between
+				align-items: center
+				.auto
+					padding: 1.25rem 3rem
+					font-size: 1.3rem
+					border-radius: 1rem
+					background-color: $c-sec
+					cursor: pointer
+					&:hover
+						background-color: $c-sec-hover
+	.games
+		display: flex
+		width: 100%
+		background-color: $c-sec
+		border-radius: 1rem
+		flex-direction: row
+		align-items: center
+		overflow: hidden
+		padding: 1rem
+		margin-bottom: 2rem
+		.game
+			font-size: 1.1rem
+			display: block
+			padding: 0.75rem 1rem
+			border-radius: 1rem
+			border: 2px solid
+			border-color: $c-orange
+			margin-right: 1rem
+			&:hover
+				color: white
+	.bets
+		display: flex
+		flex-direction: column
+		align-items: center
+		overflow-y: auto
+		overflow-x: hidden
+		&::-webkit-scrollbar
+			display: none
+		.bet
+			margin-bottom: 1rem
+			font-size: 1.3rem
+			width: 100%
+			display: flex
+			flex-direction: row
+			align-items: center
+			background: $c-sec
+			background: linear-gradient(90deg, $c-sec 77%, rgba($c-orange,0.6026785714285714) 100%)
+			border-radius: 1rem
+			padding: 0 1rem
+			text-align: center
+			.bet-image
+				display: block
+				height: 5rem
+				width: 5rem
+				border-radius: 0.75rem
+				margin-right: 3rem
+			.bet-money
+				border-radius: 1rem
+				padding: 1.5rem 2rem
+				background-color: $c-main
+				margin-right: 2rem
+				color: $c-orange
+			.bet-skins
+				display: flex
+				flex-direction: row
+				align-items: center
+				width: 40%
+				overflow: hidden
+				.bet-skin
+					display: block
+					width: 7rem
+					height: 7rem
+					margin-right: 1rem
+				.bet-addskin
+					padding: 1.5rem
+					border-radius: 1rem
+					background-color: $c-main
+			.bet-win-image
+				width: 7rem
+				height: 7rem
+				margin-left: 2rem
+				visibility: hidden
+			.bet-coef
+				width: 9.5rem
+				margin-left: auto
+				border-radius: 1rem
+				padding: 1.5rem 0
+				border: 2px solid $c-orange
+				background-color: $c-main
+			.bet-win
+				margin-left: 2rem
+				border-radius: 1rem
+				padding: 1.5rem 2rem
+				background-color: $c-main
+				width: 8rem
+				visibility: hidden
+		.win
+			border: 2px solid $c-green
+			background: linear-gradient(90deg, $c-sec 77%, rgba($c-green,0.6026785714285714) 100%)
+			.bet-coef
+				border-color: $c-green
+			.bet-win
+				visibility: visible
+			.bet-win-image
+				visibility: visible
+		.lose
+			border: 2px solid $c-red
+			background: linear-gradient(90deg, $c-sec 77%, rgba($c-red,0.6026785714285714) 100%)
+			.bet-coef
+				border-color: $c-red
+	.footer
+		display: flex
+		align-items: center
+		flex-direction: row
+		justify-content: space-between
+		font-size: 1.2rem
+		padding-top: 1rem
+		.salt
+			margin-bottom: 0.5rem
+		.agreement
+			text-decoration: underline
+			&:hover
+				color: white
+
+.content
+	padding: 2rem
+
+//skins
+.skins-block
+	display: grid
+	grid-template-rows: auto 1fr auto
+	.skins-top
+		width: 100%
+		display: flex
+		flex-direction: row
+		justify-content: space-between
+		.skins-m
+			border-radius: 1rem
+			background-color: $c-main
+			display: flex
+			flex-direction: row
+			justify-content: space-evenly
+			align-items: center
+			padding: 2rem
+			.skins-bal
+				display: flex
+				flex-direction: column
+				align-items: center
+				justify-content: space-evenly
+				.skins-bal-value
+					color: $c-orange
+		.skins-checkall
+			border-radius: 1rem
+			background-color: $c-main
+			padding: 2rem
+
+	.skins-input:checked ~ .skins-label
+		background-color: green
+	.disabled
+		background-color: gray
+
+.e404
+	display: flex
+	flex-direction: column
+	align-items: center
+	justify-content: center
+	width: 100%
+	height: 100%
+	text-align: center
+	.e404-icon
+		font-size: 10rem
+	.e404-text
+		font-size: 3rem
+		margin-top: 3rem
+
+
+*
+	-webkit-transition: background-color .3s, color .3s, border-color .3s
+	-moz-transition: background-color .3s, color .3s, border-color .3s
+	-o-transition: background-color .3s, color .3s, border-color .3s
+	transition: background-color .3s, color .3s, border-color .3s
+
+a
+	color: $c-white
+
+//
+.hidden
+	display: none !important
+
+@keyframes blink
+	from
+		opacity: 1
+	to
+		opacity: 0
+
+@keyframes circle
+	from
+		+transform(translate(0, 4rem) rotateX(70deg) rotate(0deg))
+	to
+		+transform(translate(0, 4rem) rotateX(70deg) rotate(360deg))

@@ -1,96 +1,106 @@
 <template>
-	<div class="container">
-        <skins @checkedEvent="setChecked"></skins>
-	    <div class="row justify-content-center">
-            <div class="total-game">
-                <div class="page cg_block">
-                    <div class="game-info" style="height:86px;">
-                        <div class="game-info-title">
-                            <div class="game-price">
-                                <div class="game-price-inner">
-                                    <div class="game-price-content">
-                                        <p class="box">
-                                            <span class="game-id">ИГРА <span>#<span id="gameid">{{ gameid }}</span></span>
-                                            </span>
-                                            <span class="game-bank">БАНК<span class="space">:</span><span id="roundBank4"></span><span style="font-size: 14px; padding-left: 3px; color: #ccc;">РУБ</span></span>
-                                        </p>
-                                    </div>
-                                </div>
+    <div class="content-block">
+    	<div class="upper">
+            <div class="left">
+                <div class="graph"></div>
+                <div class="stats">
+                    <div class="stats-text">СТАТИСТИКА</div>
+                    <div class="stats-right">
+                        <div class="stat">
+                            <i class="fas fa-dollar-sign stat-icon"></i>
+                            <div class="stat-block">
+                                <div class="stat-text">УЧАСТВУЕТ</div>
+                                <div class="stat-value">$25.45</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="content_block_body page_block_body cg_body page_block whiteBg clearfix">
-                        <div class="cg_graph_block">
-                            <canvas id="crashGraphic" width="450" height="350"></canvas>
-
-                            <div class="time_left disable">Следующий раунд через: <span>0</span></div>
-                        </div>
-
-                        <div class="cg_user_bet_panel">
-                            <div class="cg_input_place">
-                                <label for="cg_number" style="color:orange" >Число для вывода</label>
-                                <input type="text" name="cg_number" id="cg_number" value="" placeholder="Введите число для вывода" v-model="number">
-                            </div>
-                            <button class="cg_bet_button" @click="newBet">Поставить</button>
-                            <button class="cg_bet_button" @click="cancelBet">Отменить ставку</button>
-                            <div class="cg_hash_secret">
-                                <div class="cg_hash">
-                                    <span class="param">Хеш:</span> <span class="hash"></span>
-                                </div>
-                                <div class="cg_secret">
-                                    <span class="param">Секрет:</span> <span class="secret">Скрыто</span>
-                                </div>
-                                <div class="hash_label">(Хеш = md5 (Секрет Итоговое число))</div>
-                            </div>
-                        </div>
-
-                        <div class="cg_users_and_history clearfix">
-                            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: 450px; height: 310px;">
-                                <div class="cg_history_block">
-                                	<div class="cg_bet_title">История</div>
-	                                <div class="game1 clearfix">
-	                                    <div class="num">#</div>
-	                                    <div class="secret">секрет</div>
-	                                    <div class="number">x</div>
-	                                    <div class="hash">хэш</div>
-	                                </div>
-	                                <div class="gameshist">
-                                        <div class="game1 clearfix" v-for="(game,id) in games" :key="id" >
-                                            <div class="num">{{ game.id }}</div>
-                                            <div class="secret">секрет</div>
-                                            <div class="number">x</div>
-                                            <div class="hash">хэш</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cg_users_block">
-                                <div class="slimScrollDiv mCSB_container" id="usersList" style="position: relative; overflow: hidden; width: 450px; height: 310px;">
-                                    <div class="cg_bet_place">
-	                                    <div class="cg_bet_title">Участники</div>
-	                                    <div class="cg_bet1 clearfix">
-		                                    <div class="img"><img src=""></div>
-		                                    <div class="name">игрок</div>
-		                                    <div class="bet_num">x</div>
-		                                    <div class="bet_sum">ставка</div>
-	                                    </div>
-	                                    <div class="betshist">
-		                                    <div class="cg_bet clearfix" v-for="(bet,id) in bets" :key="id" >
-			                                    <div class="img"><img :src="bet.image"></div>
-			                                    <div class="name">{{ bet.username }}</div>
-			                                    <div class="bet_num">{{ (bet.openNumber?bet.openNumber:'??') }}</div>
-			                                    <div class="bet_sum">{{ bet.sum }}</div>
-		                                    </div>
-	                                    </div>
-                                    </div>
-                            	</div>
+                        <div class="stat">
+                            <i class="fas fa-user stat-icon"></i>
+                            <div class="stat-block">
+                                <div class="stat-text">УЧАСТНИКОВ</div>
+                                <div class="stat-value">10</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-	    </div>
-	</div>
+            <div class="right">
+                <div class="skin">
+                    <div class="skin-circle skin-i1"></div>
+                    <div class="skin-circle skin-i2"></div>
+                    <div class="skin-circle skin-i3"></div>
+                    <div class="skin-circle skin-i4"></div>
+                    <img class="skin-image r-knife" src="img/skin.png">
+                </div>
+                <div class="auto-text">АВТО-ВЫВОД</div>
+                <div class="bet">
+                    <input class="bet-input" placeholder="0.00" autocomplete="off" id="bet-input">
+                    <div class="bet-button">
+                        <div class="bet-button-text">НАЧАТЬ</div>
+                        <div class="bet-button-money">$45.33</div>
+                    </div>
+                </div>
+                <div class="autos">
+                    <div class="auto">НЕТ</div>
+                    <div class="auto">x1.2</div>
+                    <div class="auto">x1.3</div>
+                    <div class="auto">x1.5</div>
+                    <div class="auto">x2</div>
+                </div>
+            </div>
+        </div>
+        <div class="games">
+            <a class="game" href="#">1.23x</a>
+            <a class="game" href="#">1.23x</a>
+            <a class="game" href="#">1.23x</a>
+        </div>
+        <div class="bets">
+            <div class="bet">
+                <img class="bet-image" src="img/ava.jpg">
+                <div class="bet-money">$45.12</div>
+                <div class="bet-skins">
+                    <img class="bet-skin r-white" src="img/skin.png">
+                    <img class="bet-skin" src="img/skin.png">
+                    <div class="bet-addskin">+3</div>
+                </div>
+                <div class="bet-coef">В ИГРЕ</div>
+                <div class="bet-win">$48.12</div>
+                <img class="bet-win-image" src="img/skin.png">
+            </div>
+            <div class="bet win">
+                <img class="bet-image" src="img/ava.jpg">
+                <div class="bet-money">$45.12</div>
+                <div class="bet-skins">
+                    <img class="bet-skin" src="img/skin.png">
+                    <img class="bet-skin" src="img/skin.png">
+                    <div class="bet-addskin">+3</div>
+                </div>
+                <div class="bet-coef">1.2x</div>
+                <div class="bet-win">$48.12</div>
+                <img class="bet-win-image r-white" src="img/skin.png">
+            </div>
+            <div class="bet lose">
+                <img class="bet-image" src="img/ava.jpg">
+                <div class="bet-money">$45.12</div>
+                <div class="bet-skins">
+                    <img class="bet-skin" src="img/skin.png">
+                    <img class="bet-skin" src="img/skin.png">
+                    <div class="bet-addskin">+3</div>
+                </div>
+                <div class="bet-coef">КРАШ</div>
+                <div class="bet-win">$0</div>
+                <img class="bet-win-image" src="img/skin.png">
+            </div>
+        </div>
+        <div class="footer">
+            <div class="footer-left">
+                <div class="salt">Соль: ab432bab32</div>
+                <div class="hash">Хэш раунда: 6641d30b1d826dc42f31556dcb922aa6fa12cb49e08418a3ccf9d7437b107b42</div>
+            </div>
+            <div class="footer-right">
+                <router-link class="agreement" :to="{ path: '/agreement' }">Пользовательское соглашение</router-link>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -101,17 +111,12 @@
             number: 2,
         }),
         mounted() {
-            var socketCG = io.connect(':7777', {
-                secure: true,
-                'force new connection': true
-            });
-
-            socketCG.on('timeLeft', (data) =>  {
+            socket.on('timeLeft', (data) =>  {
                 $('.cg_graph_block .time_left').removeClass('disable');
                 $('.cg_graph_block .time_left span').html(data);
             });
 
-            socketCG.on('startGame', (data) => { 
+            socket.on('startGame', (data) => { 
                 startX = 0;
                 scaleX = 20;
                 scaleY = 150;
@@ -121,16 +126,16 @@
                 $('.cg_hash_secret .hash').html(data.hash);
             });
 
-            socketCG.on('endGame', (data) => { 
+            socket.on('endGame', (data) => { 
                 paintCrashGraphic(data.x, data.number);
             });
 
-            socketCG.on('newBet', (data) => {
+            socket.on('newBet', (data) => {
                 store.commit('addBet', data);
                 console.log(data);
             });
 
-            socketCG.on('crashGraph', (x) => {
+            socket.on('crashGraph', (x) => {
                 paintCrashGraphic(x);
                 $('.cg_graph_block .time_left').addClass('disable');
                 cgBetStop();

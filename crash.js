@@ -7,9 +7,9 @@ var config  = require('./config.js'),
     }),
     req = require('requestify');
 
-console.log('CRASH STARTED AT ' + config.domain + ':' + config.crashServerPort);
+console.log('CSGOCRASH NODE JS STARTED AT ' + config.domain + ':' + config.port);
 
-redisClient.psubscribe('crash.*');
+redisClient.psubscribe('*');
 redisClient.setMaxListeners(0);
 redisClient.on("pmessage", function(channel, message) {
     if(channel == 'crash.bet'){
@@ -45,8 +45,8 @@ function startNGTimer(){
 		console.log('Новая игра через '+time);
         time--;
         if(time <= 0){
-            //clearInterval(ngtimer);
-            //startGame();
+            clearInterval(ngtimer);
+            startGame();
         }
     }, 1000);
 }

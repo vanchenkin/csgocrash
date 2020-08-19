@@ -1,6 +1,5 @@
 var config = {
-    crashServerPort: 7777,
-    chatServerPort: 2020,
+    port: 7777,
     domain: 'http://localhost/csgocrash',
     secretKey: 'test',
     mathfunc: function(x){

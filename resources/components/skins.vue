@@ -1,41 +1,45 @@
 <template>
-	<div style='color:black'>
-        <div class="skins_auth" v-if="isAuth">
-            <div class="skins_item" v-for="(skin,id) in skins" :key="id">
-                <input  type="checkbox" :id="skin.id" v-model="checked" :value="id" class="skins_input hidden" @change="compSum" :disabled="remain < skin.price && checked.indexOf(id) != -1 || skin.status == 'bet'">
-                <label  :for="skin.id" class="skins_label"  :class="{ disabled : remain < skin.price && checked.indexOf(id) != -1 || skin.status == 'bet'}">
-                    <div class="skin_name">{{ skin.name }}</div>
-                    <div class="skin_price">{{ skin.price }}</div>
-                </label>
-            </div>
-            <button type="button" class="btn btn-primary" @click='changeBuy'>
-              Buy
-            </button>
-            <div :class="{ hidden: isBuy }">Баланс: {{ money }}</div>
-            <div :class="{ hidden: !isBuy }">
-                <div class="modal_content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Обмен</h5>
-                    </div>
-                    <div class="buy_money">Остаток: {{ remain }}</div>
-                    <div class="modal_body" id="modal_body">
-                        <div class="skins_item" v-for="(skin,id) in loadedSkins" :key="id">
-                            <input  type="checkbox" :id="'ls.'+skin.id" :value="id" class="skins_input hidden"  v-model="buyChecked" @change="compRemain" :disabled="remain < skin.price && buyChecked.indexOf(id) == -1">
-                            <label :for="'ls.'+skin.id" class="skins_label" :class="{ disabled : remain < skin.price && buyChecked.indexOf(id) == -1 }">
-                                <div class="skin_name">{{ skin.name }}</div>
-                                <div class="skin_price">{{ skin.price }}</div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click='buySkins' :disabled="remain == sum">Change</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @click='changeBuy'>Close</button>
-                    </div>
+    <div class="skins-block">
+        <div class="skins-top">
+            <div class="skins-m">
+                <div class="skins-bal">
+                    <div class="skins-bal-text">БАЛАНС</div>
+                    <div class="skins-bal-value">$0.00</div>
+                </div>
+                <div class="skins-bal">
+                    <div class="skins-bal-text">ВЫБРАНО</div>
+                    <div class="skins-bal-value">$0.00</div>
                 </div>
             </div>
+            <div class="skins-checkall">ВЫБРАТЬ ВСЕ</div>
         </div>
-        <div class="skins_guest" v-else>
-            вы не вошли в аккаунт
+        <div class="skins-item" v-for="(skin,id) in skins" :key="id">
+            <input  type="checkbox" :id="skin.id" v-model="checked" :value="id" class="hidden" @change="compSum" :disabled="remain < skin.price && checked.indexOf(id) != -1 || skin.status == 'bet'">
+            <label  :for="skin.id" class="skins-label"  :class="{ disabled : remain < skin.price && checked.indexOf(id) != -1 || skin.status == 'bet'}">
+                <div class="skin-name">{{ skin.name }}</div>
+                <div class="skin-price">{{ skin.price }}</div>
+            </label>
+        </div>
+        <button class="skins-button" @click='changeBuy'>Обменять</button>
+        <button class="skins-button" @click=''>Получить</button>
+        <div class="skins-money" :class="{ hidden: isBuy }">Баланс: {{ money }} $</div>
+        <div class="skins-modal" :class="{ hidden: !isBuy }">
+            <div class="skins-modal-content">
+                <div class="skins-ost">Остаток: {{ remain }}</div>
+                <div class="skins-modal-body">
+                    <div class="skins-item" v-for="(skin,id) in loadedSkins" :key="id">
+                        <input  type="checkbox" :id="'ls.'+skin.id" :value="id" class="hidden"  v-model="buyChecked" @change="compRemain" :disabled="remain < skin.price && buyChecked.indexOf(id) == -1">
+                        <label :for="'ls.'+skin.id" class="skins-label" :class="{ disabled : remain < skin.price && buyChecked.indexOf(id) == -1 }">
+                            <div class="skin-name">{{ skin.name }}</div>
+                            <div class="skin-price">{{ skin.price }}</div>
+                        </label>
+                    </div>
+                </div>
+                <div class="skins-modal-footer">
+                    <div class="" @click='buySkins' :disabled="remain == sum">Обменять</div>
+                    <div class="" @click='changeBuy'>Закрыть</div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -112,7 +116,7 @@
                 }
             },
             checked(newValue, oldValue){
-                this.$emit('checkedEvent', this.checked);
+                this.$store.commit('setChecked', newValue);
             }
         },
         methods: {

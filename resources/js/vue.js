@@ -19,10 +19,14 @@ window.store = new Vuex.Store({
         gameid: null,
         bets: null,
         isAuth: false,
+        checked: null,
     },
         mutations: {
         setSkins(state, skins){
             state.skins = skins;
+        },
+        setChecked(state, checked){
+            state.checked = checked;
         },
         setGames(state, games){
             state.games = games;
@@ -82,14 +86,29 @@ const router = new VueRouter({
             component: vue_faq,
         },
         {
+            path: '/fair',
+            component: vue_fair,
+        },
+        {
+            path: '/agreement',
+            component: vue_agreement,
+        },
+        {
             path: '*',
             component: vue_404,
         },
     ],
 });
 
+import { mapState } from 'vuex';
+
 window.vm = new Vue({
     el: '#app',
     router,
     store,
+    watch: {
+        '$store.state.money': function(nv, ov) {
+            $("#money").text(nv);
+        },
+    },
 });

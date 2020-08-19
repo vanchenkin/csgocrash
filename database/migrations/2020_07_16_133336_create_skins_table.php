@@ -17,6 +17,7 @@ class CreateSkinsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('quality');
+            $table->enum('rarity', ['white', 'lightblue', 'blue', 'purple', 'pink', 'red', 'knife']);
             $table->boolean('stattrak');
             $table->string('image');
             $table->double('price');
