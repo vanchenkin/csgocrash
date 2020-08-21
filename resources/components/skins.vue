@@ -4,72 +4,78 @@
             <div class="skins-m">
                 <div class="skins-bal">
                     <div class="skins-bal-text">БАЛАНС</div>
-                    <div class="skins-bal-value">$0.00</div>
+                    <div class="skins-bal-value">$ {{ money.toFixed(2) }}</div>
                 </div>
                 <div class="skins-bal">
                     <div class="skins-bal-text">ВЫБРАНО</div>
-                    <div class="skins-bal-value">$0.00</div>
+                    <div class="skins-bal-value skins-bal-check">$ {{ sum.toFixed(2) }}</div>
                 </div>
             </div>
-            <div class="skins-checkall">ВЫБРАТЬ ВСЕ</div>
+            <div class="skins-checkall" @click="checkAll">ВЫБРАТЬ ВСЕ</div>
         </div>
-        <div class="skins-item" v-for="(skin,id) in skins" :key="id">
-            <input  type="checkbox" :id="skin.id" v-model="checked" :value="id" class="hidden" @change="compSum" :disabled="remain < skin.price && checked.indexOf(id) != -1 || skin.status == 'bet'">
-            <label  :for="skin.id" class="skins-label"  :class="{ disabled : remain < skin.price && checked.indexOf(id) != -1 || skin.status == 'bet'}">
-                <div class="skin-name">{{ skin.name }}</div>
-                <div class="skin-price">{{ skin.price }}</div>
-            </label>
+        <div class="skins-items-wrapper">
+            <div class="skins-items">
+                <div class="skins-item" v-for="(skin,id) in skins" :key="id">
+                    <input  type="checkbox" :id="skin.id" v-model="checked" :value="id" class="skins-input hidden" :disabled="(isBuy && remain < skin.price && checked.indexOf(id) != -1) || skin.status == 'bet'">
+                    <label  :for="skin.id" class="skins-label"  :class="{ disabled : (isBuy && remain < skin.price && checked.indexOf(id) != -1) || skin.status == 'bet'}">
+                        <div class="skins-price">$ {{ skin.price.toFixed(2) }}</div>
+                        <img class="skins-image" :class="'r-'+skin.rarity" :src="skin.image">
+                        <div class="skins-weapon">{{ skin.weapon }}</div>
+                        <div class="skins-name">{{ skin.name }}</div>
+                        <div class="skins-quality">{{ skin.quality }}</div>
+                    </label>
+                </div>
+            </div>
         </div>
-        <button class="skins-button" @click='changeBuy'>Обменять</button>
-        <button class="skins-button" @click=''>Получить</button>
-        <div class="skins-money" :class="{ hidden: isBuy }">Баланс: {{ money }} $</div>
-        <div class="skins-modal" :class="{ hidden: !isBuy }">
+        <div class="skins-buttons">
+            <div class="button skins-button skins-gray" @click='withdraw'>ВЫВЕСТИ</div>
+            <div class="button skins-button" @click='changeBuy'>ОБМЕНЯТЬ</div>
+        </div>
+        <div id="skins-modal" class="skins-modal blur" :class="{ hidden: !isBuy }">
             <div class="skins-modal-content">
-                <div class="skins-ost">Остаток: {{ remain }}</div>
-                <div class="skins-modal-body">
-                    <div class="skins-item" v-for="(skin,id) in loadedSkins" :key="id">
-                        <input  type="checkbox" :id="'ls.'+skin.id" :value="id" class="hidden"  v-model="buyChecked" @change="compRemain" :disabled="remain < skin.price && buyChecked.indexOf(id) == -1">
-                        <label :for="'ls.'+skin.id" class="skins-label" :class="{ disabled : remain < skin.price && buyChecked.indexOf(id) == -1 }">
-                            <div class="skin-name">{{ skin.name }}</div>
-                            <div class="skin-price">{{ skin.price }}</div>
-                        </label>
+                <div class="skins-modal-top">
+                    <div class="skins-ost">
+                        <div class="skins-ost-text">ОСТАТОК</div>
+                        <div class="skins-ost-value">$ {{ remain.toFixed(2) }}</div>
+                    </div>
+                    <div class="skins-sort">
+                        <input class="skins-sort-name skins-sort-input" type="text" placeholder="Введите название" v-model="name" @input="reload()">
+                        <div class="skins-sort-price">
+                            <input class="skins-sort-min skins-sort-input" type="text" placeholder="Мин.цена" v-model="min" @input="reload()">
+                            <input class="skins-sort-max skins-sort-input" type="text" placeholder="Макс.цена" v-model="max" @input="reload()">
+                        </div>
                     </div>
                 </div>
-                <div class="skins-modal-footer">
-                    <div class="" @click='buySkins' :disabled="remain == sum">Обменять</div>
-                    <div class="" @click='changeBuy'>Закрыть</div>
+                <div class="skins-items-wrapper" id="modal-items">
+                    <template v-if="loading">
+                        <div class="skins-loading"><div class="skins-loader"></div></div>
+                    </template>
+                    <template v-else-if="loadedSkins.length">
+                        <div class="skins-items">
+                            <div class="skins-item" v-for="(skin,id) in loadedSkins" :key="id">
+                                <input  type="checkbox" :id="'ls.'+skin.id" :value="id" class="skins-input hidden" v-model="buyChecked" :disabled="remain < skin.price && buyChecked.indexOf(id) == -1">
+                                <label :for="'ls.'+skin.id" class="skins-label" :class="{ disabled : remain < skin.price && buyChecked.indexOf(id) == -1 }">
+                                    <div class="skins-price">$ {{ skin.price.toFixed(2) }}</div>
+                                    <img class="skins-image" :class="'r-'+skin.rarity" :src="skin.image">
+                                    <div class="skins-weapon">{{ skin.weapon }}</div>
+                                    <div class="skins-name">{{ skin.name }}</div>
+                                    <div class="skins-quality">{{ skin.quality }}</div>
+                                </label>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="skins-notfound">СКИНОВ НЕ НАЙДЕНО</div>
+                    </template>
+                </div>
+                <div class="skins-buttons">
+                    <div class="button skins-button skins-gray" @click='changeBuy'>ЗАКРЫТЬ</div>
+                    <div class="button skins-button" @click='buySkins' :class="{ 'button-disabled': remain == money }">ОБМЕНЯТЬ</div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
-<style>
-    .modal_body{
-        height:  300px;
-        overflow: auto;
-    }
-    .modal_content{
-        width:  500px;
-    }
-    .skins_item{
-        display: inline-block;
-    }
-    .skins_label{
-        background-color: lightblue;
-        padding: 10px;
-        margin: 5px;
-    }
-    .skins_input:checked ~ .skins_label{
-        background-color: green;
-    }
-    .hidden{
-        display: none;
-    }
-    .disabled{
-        background-color: grey;
-    }
-</style>
 
 <script>
     import { mapState } from 'vuex';
@@ -83,71 +89,99 @@
                 loadedSkins: [],
                 buyChecked: [],
                 page: 1,
+                min: null,
+                max: null,
+                name: null,
+                loading: true,
             };
         },
         computed: {
-            ...mapState(['isAuth', 'skins', 'money']),
+            ...mapState(['role', 'skins', 'money']),
         },
         created() {
             $(() => {
-                let el = document.querySelector('#modal_body');
+                let el = document.querySelector('#modal-items');
                 if(el)
-                el.addEventListener('scroll', () => {
-                    if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
-                        this.loadMore();
+                    el.addEventListener('scroll', () => {
+                        if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+                            this.loadMore();
+                        }
+                    });
+                $(document).mouseup((e) => {
+                    var div = $("#skins-modal");
+                    if (!div.is(e.target) && div.has(e.target).length === 0 && this.isBuy) {
+                        this.changeBuy();
                     }
                 });
             });
         },
-        mounted() {
-            this.sum = parseInt(this.money);
-        },
         watch: {
             money(newValue, oldValue) {
-                this.sum = parseInt(this.money);
+                this.sum = 0;
                 this.checked = [];
                 this.isBuy = false;
             },
             sum(newValue, oldValue){
                 this.remain += newValue - oldValue;
-                if(this.remain < 0){
-                    this.buyChecked = [];
-                    this.remain = this.sum;
-                }
             },
             checked(newValue, oldValue){
                 this.$store.commit('setChecked', newValue);
-            }
+                var s = 0;
+                for(var i in newValue)
+                    s += this.skins[newValue[i]].price;
+                this.sum = s;
+            },
+            buyChecked(newValue, oldValue){
+                var s = 0;
+                for(var i in newValue)
+                    s += this.loadedSkins[newValue[i]].price;
+                this.remain = this.sum + this.money - s;
+            },
         },
         methods: {
-            compSum: function(event){
-                if(!event.target.checked) this.sum-=this.skins[event.target.value].price;
-                else this.sum+=this.skins[event.target.value].price;
-            },
-            compRemain: function(event){
-                var id = event.target.value;
-                if(!event.target.checked) this.remain+=this.loadedSkins[id].price;
-                else this.remain-=this.loadedSkins[id].price;
-            },
-            changeBuy: function(){
+            reload: function(){
+                this.loading = true;
                 this.loadedSkins = [];
                 this.buyChecked = [];
+                this.page = 1;
+                this.remain = this.sum + this.money;
+                this.loadMore();
+            },
+            checkAll: function(){
+                if(this.checked.length == this.skins.length)
+                    this.checked = [];
+                else{
+                    var a = [];
+                    for(var i in this.skins)
+                        a.push(i)
+                    this.checked = a;
+                }
+            },
+            changeBuy: function(){
                 if(this.isBuy == false){
-                    this.page = 1;
-                    this.loadMore();
-                    this.remain = this.sum;
+                    this.max = (this.sum + this.money).toFixed(2);
+                    this.reload();
                 }
                 this.isBuy = !this.isBuy;
             },
             loadMore: function(){
-                axios.get(APP_URL+'/api/skins/get?page='+this.page)
+                axios.get(APP_URL+'/api/skins/get?page='+this.page, {
+                    params: {
+                        min: this.min,
+                        max: this.max,
+                        name: this.name
+                    }
+                })
                 .then((req) => {
+                    var pas = req.config.params;
+                    if(pas.max != this.max || pas.min != this.min || pas.name != this.name || req.data.current_page != this.page) return;
                     this.loadedSkins = this.loadedSkins.concat(req.data.data);
                     this.page++;
+                    this.loading = false;
                 })
-                .catch(() => {
-                    $.notify('error with api');
-                });
+            },
+            withdraw: function(){
+                console.log(this.min);
             },
             buySkins: function(){
                 var tBuy = [], tSell = [];
@@ -163,9 +197,9 @@
                 })
                 .then((req) => {
                     if(req.data.type == 'error'){
-                        $.notify('error with data');
+                        notifyError('ERROR');
                     }else if(req.data.type == 'success'){
-                        $.notify('OK');
+                        notifySuccess('OK');
                         this.$store.commit('delSkins', req.data.del);
                         this.$store.commit('addSkins', req.data.add);
                         this.$store.commit('setMoney', req.data.money);
@@ -174,7 +208,7 @@
                     this.checked = [];
                 })
                 .catch(() => {
-                    $.notify('error with api');
+                    notifyError('ERROR');
                 });
             }
         },

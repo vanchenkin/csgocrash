@@ -52,12 +52,12 @@
                     @if(!Auth::check())
                         <a class="steam-button" href="{{ route('login') }}"><i class="fab fa-steam-symbol"></i><span>ВОЙТИ ЧЕРЕЗ STEAM<span></a>
                     @else
-                        <div class="header-right-button">ПОПОЛНИТЬ</div>
+                        <div class="button header-right-button">ПОПОЛНИТЬ</div>
                         <div class="header-right-nameblock">
-                            <div class="header-right-name">{{ Auth::user()->username }}</div>
+                            <div class="header-right-name">{{ Auth::user()->name }}</div>
                             <div class="header-right-money">$<span id="money"></span></div>
                         </div>
-                        <img class="header-right-image" src="{{ Auth::user()->avatar }}">
+                        <img class="header-right-image" src="{{ Auth::user()->image }}">
                         <a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt header-right-icon"></i></a>
                     @endif
                 </div>
@@ -76,65 +76,10 @@
                             <skins></skins>
                         @endif
                     </div>
-                    <div class="draw">
-                        <div class="draw-header">
-                            <i class="fas fa-trophy draw-header-icon"></i>
-                            <div class="draw-header-text">БЕСПЛАТНЫЙ РОЗЫГРЫШ</div>
-                            <div class="draw-header-time">12:23</div>
-                        </div>
-                        <div class="draw-body">
-                            <img class="draw-body-image" src="img/draw.png">
-                            <div class="draw-body-r">
-                                <div class="draw-body-text">AWP</div>
-                                <div class="draw-body-stext">ИСТОРИЯ О ДРАКОНЕ</div>
-                                <div class="draw-body-ttext">(WELL-WORN)</div>
-                                <div class="draw-body-button">УЧАСТВОВАТЬ</div>
-                            </div>
-                        </div>
-                        <div class="draw-count">
-                            <div class="draw-count-text">УЧАСТНИКОВ</div>
-                            <div class="draw-count-c">12</div>
-                        </div>
-                    </div>
+                    <draw></draw>
                 </div>
-
-                <router-view></router-view>
-
-                <div class="chat">
-                    <div class="chat-header">
-                        <i class="fas fa-comments chat-header-icon"></i>
-                        <div class="chat-header-text">ОНЛАЙН ЧАТ</div>
-                        <div class="chat-header-rules">правила</div>
-                    </div>
-                    <div class="chat-body">
-                        <div class="chat-inner">
-                            <div class="chat-message">
-                                <a href="#"><img class="chat-image" src="img/ava.jpg"></a>
-                                <div class="chat-block">
-                                    <div class="chat-nameblock">
-                                        <a class="chat-name" href="#">vanchenkin</a>
-                                        <div class="chat-time">17:27</div>
-                                    </div>
-                                    <div class="chat-text">Всем привет!</div>
-                                </div>
-                            </div>
-                            <div class="chat-message reversed">
-                                <img class="chat-image" src="img/ava.jpg">
-                                <div class="chat-block">
-                                    <div class="chat-nameblock">
-                                        <div class="chat-name">vanchenkin</div>
-                                        <div class="chat-time">17:27</div>
-                                    </div>
-                                    <div class="chat-text">Всем привет!</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-send">
-                        <input type="text" name="message" class="chat-send-input" placeholder="Введите сообщение" autocomplete="off">
-                        <div class="chat-send-button"><i class="fas fa-arrow-right chat-send-icon"></i></div>
-                    </div>
-                </div>
+                    <router-view></router-view>
+                <chat></chat>
             </main>
         </div>
         <script>
@@ -143,13 +88,13 @@
                     $("body").removeClass("preload");
                 });
                 @auth
-                    store.commit('setAuth');
+                    store.commit('setRole', '{{ Auth::user()->role }}');
                 @endauth
                 store.commit('setSkins', @json($skins));
-                store.commit('setMoney', @json($money));
+                store.commit('setMoney', parseFloat(@json($money)));
                 store.commit('setBets', @json($bets));
                 store.commit('setGames', @json($games));
-                store.commit('setGameid', @json($gameid));
+                store.commit('setGame', @json($game));
             });
         </script>
     </body>

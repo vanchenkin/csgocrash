@@ -15,6 +15,7 @@ class CreateSkinsTable extends Migration
     {
         Schema::create('skins', function (Blueprint $table) {
             $table->id();
+            $table->string('weapon');
             $table->string('name');
             $table->string('quality');
             $table->enum('rarity', ['white', 'lightblue', 'blue', 'purple', 'pink', 'red', 'knife']);

@@ -69,8 +69,8 @@ class SteamController extends Controller
         }
         $s = new SteamID($info->steamID64);
         return User::create([
-            'username' => $info->personaname,
-            'avatar' => $info->avatarfull,
+            'name' => $info->personaname,
+            'image' => $info->avatarfull,
             'steamid64' => $info->steamID64,
             'steamid' => $info->steamid,
             'steamLink' => $info->profileurl

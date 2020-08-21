@@ -24,5 +24,15 @@ class BetSeeder extends Seeder
             'bet_id' => 1,
             'r_skin_id' => 1,
         ]);
+        DB::table('bets')->insert([
+            'user_id' => 1,
+            'game_id' => 1,
+            'number' => 2,
+            'status' => 'win',
+        ]);
+        DB::table('bet_skin')->insert([
+            'bet_id' => 2,
+            'r_skin_id' => 1,
+        ]);
     }
 }

@@ -16,6 +16,10 @@ Route::group(['middleware' => 'auth'], function(){
 	});
 });
 
+Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function(){
+	Route::any('/', 'AdminController@index');
+});
+
 
 
 //AUTH

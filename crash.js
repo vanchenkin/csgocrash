@@ -7,7 +7,7 @@ var config  = require('./config.js'),
     }),
     req = require('requestify');
 
-console.log('CSGOCRASH NODE JS STARTED AT ' + config.domain + ':' + config.port);
+console.log('CSGOCRASH STARTED AT ' + config.domain + ':' + config.port);
 
 redisClient.psubscribe('*');
 redisClient.setMaxListeners(0);
@@ -28,7 +28,7 @@ function startTimer() {
     clearInterval(timer);
     timer = setInterval(function () {
         x = x + 0.1;
-        var num  = config.mathfunc(x);
+        var num  = Math.pow(1.06, x).toFixed(2);
         if(num >= game.number){
     		finishGame();
     		clearInterval(timer);

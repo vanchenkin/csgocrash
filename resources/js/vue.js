@@ -13,17 +13,18 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 
 window.store = new Vuex.Store({
     state: {
-        skins: null,
+        skins: [],
         money: 0,
-        games: null,
-        gameid: null,
-        bets: null,
-        isAuth: false,
-        checked: null,
+        games: [],
+        game: [],
+        bets: [],
+        role: 'no',
+        checked: [],
     },
-        mutations: {
+    mutations: {
         setSkins(state, skins){
-            state.skins = skins;
+            state.skins = skins
+            state.skins.sort((a,b) => (a.price < b.price) ? 1 : -1);
         },
         setChecked(state, checked){
             state.checked = checked;
@@ -37,14 +38,15 @@ window.store = new Vuex.Store({
         setMoney(state, money){
             state.money = money;
         },
-        setGameid(state, gameid){
-            state.gameid = gameid;
+        setGame(state, game){
+            state.game = game;
         },
-        setAuth(state){
-            state.isAuth = true;
+        setRole(state, role){
+            state.role = role;
         },
         addSkins(state, skins){
             state.skins = state.skins.concat(skins);
+            state.skins.sort((a,b) => (a.price < b.price) ? 1 : -1);
         },
         delSkins(state, skins){
             for(var i in skins){
@@ -70,12 +72,14 @@ const router = new VueRouter({
             component: vue_main,
         },
         {
-            path: '/game',
+            path: '/game/:id',
             component: vue_game,
+            name: 'game',
         },
         {
-            path: '/user',
+            path: '/user/:id',
             component: vue_user,
+            name: 'user',
         },
         {
             path: '/support',

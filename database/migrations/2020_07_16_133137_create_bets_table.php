@@ -20,6 +20,7 @@ class CreateBetsTable extends Migration
             $table->bigInteger('game_id')->unsigned();
             $table->foreign('game_id')->references('id')->on('games');
             $table->double('number');
+            $table->enum('status', ['ingame', 'win', 'lose'])->default('ingame');
             $table->timestamps();
         });
     }

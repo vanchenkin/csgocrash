@@ -15,16 +15,16 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('username');
-            $table->string('avatar');
+            $table->string('name');
+            $table->string('image');
             $table->string('steamid');
             $table->string('steamid64');
             $table->string('steamLink');
             $table->string('tradeLink')->nullable()->default(null);
-            //$table->string('accessSalt')->default("");
             $table->string('money')->default('0');
             $table->string('refcode')->nullable()->default(null);
             $table->enum('role', ['admin', 'moderator', 'default', 'fake'])->default('default');
+            $table->integer('chatBan')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

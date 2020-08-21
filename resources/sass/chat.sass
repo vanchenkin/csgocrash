@@ -1,0 +1,98 @@
+.chat
+	background-color: $c-sec
+	border-radius: $border-radius 0 0 0
+	height: 100%
+	padding: 2rem
+	display: grid
+	grid-template-rows: 4rem 1fr 7rem
+	overflow: hidden
+	.chat-header
+		display: flex
+		justify-content: space-evenly
+		align-items: center
+		margin-bottom: 1rem
+		.chat-header-text
+			font-size: 1.5rem
+			font-weight: 700
+			margin: 0 1rem
+		.chat-header-rules
+			color: $c-orange
+			font-size: 1.3rem
+			text-decoration: underline
+			cursor: pointer
+			&:hover
+				color: $c-orange-hover
+		.chat-header-icon
+			font-size: 2.5rem
+	.chat-body
+		overflow: hidden
+		height: 100%
+		.chat-inner
+			display: flex
+			align-items: center
+			flex-direction: column
+			padding-bottom: 2rem
+			overflow-y: auto
+			max-height: 100%
+			min-height: 100%
+			&::-webkit-scrollbar
+				display: none
+			.chat-message
+				margin-top: auto
+				width: 100%
+				display: flex
+				flex-direction: row
+				align-items: center
+				margin: 1rem 0
+				.chat-image
+					border-radius: 1rem
+					width: 5rem
+					height: 5rem
+					margin-right: 1rem
+					margin-top: 0.5rem
+				.chat-block
+					display: flex
+					flex-direction: column
+					width: 100%
+				.chat-nameblock
+					display: flex
+					justify-content: space-between
+					margin: 0.5rem
+					font-size: 1.25rem
+					.chat-name:visited
+						color: $c-white
+				.chat-text
+					font-size: 1.2rem
+					border-radius: 0.75rem
+					padding: 1.5rem 1rem
+					background-color: $c-main
+					width: 100%
+				&:first-child
+					margin-top: auto !important
+			.reversed
+				flex-direction: row-reverse
+				.chat-image
+					margin-right: 0rem
+					margin-left: 1rem
+				.chat-nameblock
+					flex-direction: row-reverse
+	.chat-send
+		display: flex
+		align-items: center
+		justify-content: space-around
+		flex-direction: row
+		.chat-send-input
+			padding: 2rem
+			font-size: 1.2rem
+			border: 0
+			background-color: $c-main
+			border-radius: 1rem
+			color: $c-white
+			&:focus
+				outline: none
+			width: 80%
+		.chat-send-button
+			padding: 1rem
+			.chat-send-icon
+				color: white
+				font-size: 2rem

@@ -15,13 +15,13 @@ class SkinsController extends Controller
 
         $min = 0;
         if($request->has('min'))
-            $min = $request->min;
+            $min = $request->input('min');
         $max = 1e9;
         if($request->has('max'))
-            $max = $request->max;
+            $max = $request->input('max');
         $name = '';
         if($request->has('name'))
-            $name = $request->name;
+            $name = $request->input('name');
     	return Skin::where('price', '<=', $max)->where('price', '>=', $min)->orderBy('price', 'DESC')->simplePaginate(10);
     }
 

@@ -111,9 +111,11 @@ class MainController extends Controller {
             'number' => $number,
 			'skins' => $bet->skins()->with('skin')->get(),
 			'sum' => $bet->calcBet(),
-            'userid' => $request->user()->id,
-			'username' => $request->user()->username,
-			'image' => $request->user()->avatar,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'image' => $user->image,
+            ],
             'win' => $bet->winSkin(),
         ]));
         return response()->json(['text' => 'Действие выполнено.', 'type' => 'success']);
@@ -144,25 +146,33 @@ class MainController extends Controller {
 
     public function index(Request $request)
     {
-        $gameid = $this->game->id;
+        $game = [
+            'id' => $this->game->id,
+            'hash' => $this->game->hash(),
+            'status' => $this->game->status,
+        ];
         $games = Game::where('status', 'finished')->orderBy('id', 'desc')->take(10)->get();
         $tbets = $this->game->bets()->with('user')->get();
 
-        $bets = array();
+        $bets = [];
         foreach ($tbets as $bet) {
             $skins = $bet->skins()->with('skin')->get();
             $user = $bet->user;
             array_push($bets, [
+                'id' => $bet->id,
                 'number' => $bet->number,
                 'skins' => $skins,
                 'sum' => $bet->calcBet(),
-                'userid' => $user->id,
-                'username' => $user->username,
-                'image' => $user->avatar,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'image' => $user->image,
+                ],
                 'win' => $bet->winSkin(),
+                'status' => $bet->status,
             ]);
         }
-        $skins = array();
+        $skins = [];
         $money = 0;
         if(Auth::check()){
             $money = Auth::user()->money;
@@ -170,9 +180,11 @@ class MainController extends Controller {
             foreach ($tskins as $skin) {
                 array_push($skins, [
                     'id' => $skin->id,
+                    'weapon' => $skin->skin->weapon,
                     'name' => $skin->skin->name,
                     'quality' => $skin->skin->quality,
                     'stattrak' => $skin->skin->stattrak,
+                    'rarity' => $skin->skin->rarity,
                     'image' => $skin->skin->image,
                     'price' => $skin->price,
                     'status' => $skin->status,
@@ -180,6 +192,6 @@ class MainController extends Controller {
             }
         }
 
-        return view('main', compact('gameid', 'bets', 'skins', 'games', 'money'));
+        return view('main', compact('game', 'bets', 'skins', 'games', 'money'));
     }
 }
