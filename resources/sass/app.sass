@@ -37,14 +37,24 @@ $shadow-spread: 0.5rem
 
 .cf-red
 	border-color: $cf-red !important
+	&:hover
+		background-color: $cf-red !important
 .cf-orange
 	border-color: $cf-orange !important
+	&:hover
+		background-color: $cf-orange !important
 .cf-pink
 	border-color: $cf-pink !important
+	&:hover
+		background-color: $cf-pink !important
 .cf-green
 	border-color: $cf-green !important
+	&:hover
+		background-color: $cf-green !important
 .cf-gold
 	border-color: $cf-gold !important
+	&:hover
+		background-color: $cf-gold !important
 
 .blur
 	filter: drop-shadow(0 0 0.8rem rgba($c-orange, 0.7))
@@ -58,6 +68,10 @@ $ct-grid-color: rgba($c-white, 0.4)
 @import 'skins.sass'
 @import 'main.sass'
 @import 'chat.sass'
+@import 'draw.sass'
+@import 'support.sass'
+@import 'fair.sass'
+@import 'faq.scss'
 
 
 // @media only screen and (min-width: 1023px)
@@ -136,9 +150,13 @@ header
 			margin-left: 1rem
 			&:hover
 				background-color: $c-sec-hover
+			.logo-volume
+				width: 2rem
 			.logo-icon
 				top: -0.2rem
 				position: relative
+			.logo-langs
+				display: none
 	nav
 		display: flex
 		justify-content: space-evenly
@@ -196,7 +214,7 @@ header
 					font-size: 0.8rem
 					position: relative
 					margin-right: 0.2rem
-					+animation(blink 800ms alternate infinite)
+					+animation(blink 500ms alternate infinite)
 		.fab
 			position: relative
 			top: 0.05rem
@@ -204,27 +222,31 @@ header
 		display: flex
 		align-items: center
 		justify-content: center
-		.header-right-image
-			border-radius: 1rem
-			width: 4rem
-			height: 4rem
-			margin-right: 1rem
-		.header-right-nameblock
-			font-size: 1.2rem
-			margin: 0 1rem
+		.header-right-user
 			display: flex
-			align-items: flex-end
+			align-items: center
 			justify-content: center
-			flex-direction: column
-			.header-right-money
-				color: $c-orange
-				margin-top: 0.3rem
-			.header-right-name
-				overflow: hidden
-				text-overflow: ellipsis
-				max-width: 15rem
+			.header-right-image
+				border-radius: 1rem
+				width: 4rem
+				height: 4rem
+				margin-right: 1rem
+			.header-right-nameblock
+				font-size: 1.2rem
+				margin: 0 1rem
+				display: flex
+				align-items: flex-end
+				justify-content: center
+				flex-direction: column
+				.header-right-money
+					color: $c-orange
+					margin-top: 0.3rem
+				.header-right-name
+					overflow: hidden
+					text-overflow: ellipsis
+					max-width: 15rem
 		.header-right-button
-			font-size: 1.2rem
+			font-size: 1.25rem
 			font-weight: 700
 			padding: 1.25rem
 		.header-right-icon
@@ -261,72 +283,29 @@ main
 	flex-direction: column
 	overflow: hidden
 
-.draw
-	display: grid
-	grid-template-rows: 4rem 1fr 5rem
-	width: 100%
-	background-color: $c-sec
-	border-radius: 0 $border-radius 0 0
-	padding: 2rem
-	.draw-header
-		display: flex
-		justify-content: space-evenly
-		align-items: center
-		margin-bottom: 1rem
-		.draw-header-text
-			font-size: 1.5rem
-			font-weight: 700
-			margin: 0 1rem
-		.draw-header-time
-			color: $c-orange
-			font-size: 2rem
-			//margin-left: auto
-		.draw-header-icon
-			font-size: 2.5rem
-	.draw-body
-		display: flex
-		justify-content: space-evenly
-		height: 17rem
-		.draw-body-image
-			height: 17rem
-		.draw-body-r
-			display: flex
-			flex-direction: column
-			align-items: center
-			justify-content: center
-			.draw-body-text
-				font-size: 1.5rem
-			.draw-body-stext
-				font-size: 1.25rem
-				color: $c-orange
-				margin-top: 0.5rem
-				text-align: center
-			.draw-body-ttext
-				font-size: 1.25rem
-				color: $c-orange
-				margin-top: 0.25rem
-				text-align: center
-			.draw-body-button
-				margin-top: 2rem
-				padding: 2rem
-				font-size: 1.5rem
-				font-weight: 700
-	.draw-count
-		border-radius: 0.5rem
-		background-color: $c-main
-		display: flex
-		align-items: center
-		justify-content: space-between
-		padding: 1.5rem
-		font-size: 1.5rem
-		width: 35rem
-		margin: 0 auto
-
-
-
 .content
 	padding: 2rem
 	overflow: hidden
+	display: grid
+	height: 100%
+	grid-template-rows: 1fr auto
+	.page
+		display: grid
+		height: 100%
+		grid-template-rows: auto 1fr
+		.page-header
+			font-size: 2rem
+			padding: 0 3rem
+		.page-body
+			padding: 1rem
+			overflow: hidden
+			height: 100%
+			.page-scroll
+				overflow-y: auto
+				max-height: 100%
+				min-height: 100%
+				&::-webkit-scrollbar
+					display: none
 
 
 .notify
@@ -376,7 +355,6 @@ main
 	background-color: $c-sec
 	display: none
 	width: min-content
-	bottom: -3rem
 	filter: drop-shadow(0 0 0.8rem rgba($c-orange, 0.7))
 
 *

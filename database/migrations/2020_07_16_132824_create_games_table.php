@@ -15,10 +15,10 @@ class CreateGamesTable extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->double('number');
+            $table->double('number', 10, 2);
             $table->string('salt');
             $table->enum('status', ['created', 'current', 'finished'])->default('created');
-            $table->double('profit')->nullable()->default(null);
+            $table->double('profit', 10, 2)->nullable()->default(null);
             $table->timestamps();
         });
     }

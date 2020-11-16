@@ -2001,6 +2001,12 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     'number': {
       "default": 0
+    },
+    'tof': {
+      "default": 0
+    },
+    'back': {
+      "default": true
     }
   },
   ready: function ready() {
@@ -2008,19 +2014,28 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     number: function number() {
-      clearInterval(this.interval);
+      var _this = this;
 
-      if (this.number == this.displayNumber) {
+      clearInterval(this.interval);
+      var a = parseFloat(this.number).toFixed(this.tof),
+          b = parseFloat(this.displayNumber).toFixed(this.tof);
+
+      if (a == b) {
         return;
       }
 
       this.interval = window.setInterval(function () {
-        if (this.displayNumber != this.number) {
-          var change = (this.number - this.displayNumber) / 10;
-          change = change >= 0 ? Math.ceil(change) : Math.floor(change);
-          this.displayNumber = this.displayNumber + change;
+        if (!_this.back && a < b) {
+          _this.displayNumber = _this.number;
+          clearInterval(_this.interval);
         }
-      }.bind(this), 20);
+
+        if (a != b) {
+          var change = (_this.number - _this.displayNumber) / 10;
+          change = change >= 0 ? Math.ceil(change) : Math.floor(change);
+          _this.displayNumber = _this.displayNumber + change;
+        }
+      }, 20);
     }
   }
 });
@@ -2071,25 +2086,65 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {};
+    return {
+      message: '',
+      scroll: true
+    };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['role'])),
-  created: function created() {},
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'messages'])),
+  mounted: function mounted() {
+    var _this = this;
+
+    $(window).resize(function () {
+      $('#chat').scrollTop($('#chat')[0].scrollHeight);
+    });
+    socket.on('message', function (data) {
+      store.commit('addMessage', data);
+    });
+    $('#chat').scroll(function () {
+      _this.scroll = $('#chat').scrollTop() == $('#chat')[0].scrollHeight - $('#chat')[0].clientHeight;
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.code == 'Enter') {
+        _this.send();
+      }
+    });
+  },
+  updated: function updated() {
+    if (this.scroll) this.$nextTick(function () {
+      return $('#chat').scrollTop($('#chat')[0].scrollHeight);
+    });
+  },
   watch: {},
-  methods: {}
+  methods: {
+    reply: function reply(name) {
+      this.message = name + ', ';
+    },
+    send: function send() {
+      var _this2 = this;
+
+      if (this.message == '') return;
+
+      if (!this.user.auth) {
+        notifyError('need login');
+        return;
+      }
+
+      axios.get(APP_URL + '/api/chat/send', {
+        params: {
+          text: this.message
+        }
+      }).then(function (req) {
+        _this2.message = '';
+        if (req.data.type == 'error') notifyError(req.data.text);
+      })["catch"](function () {
+        notifyError('API error');
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -2133,15 +2188,242 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      count: 0,
+      time: 0
+    };
+  },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['draw', 'user'])),
+  watch: {
+    draw: function draw() {
+      if (this.draw) {
+        this.count = this.draw.count;
+        this.time = this.draw.time;
+      }
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    socket.on('drawCount', function (data) {
+      _this.count = data;
+    });
+    setInterval(function () {
+      _this.time--;
+    }, 1000);
+  },
+  methods: {
+    take: function take() {
+      axios.get(APP_URL + '/api/draw/take').then(function (req) {
+        if (req.data.type = "success") {
+          store.commit('takeDraw');
+        }
+      })["catch"](function () {
+        notifyError('API error');
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/fair.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/components/pages/fair.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {};
+  },
+  created: function created() {},
+  watch: {},
+  methods: {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/faq.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/components/pages/faq.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mounted: function mounted() {
+    var acc = document.getElementsByClassName("accordion"),
+        i;
+
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+
+        if (panel.style.display == "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/game.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/components/pages/game.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {};
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])([''])),
-  created: function created() {},
-  watch: {},
-  methods: {}
+  mounted: function mounted() {},
+  watch: {
+    $route: function $route(to, from) {
+      this.reload(to.id);
+    }
+  },
+  methods: {
+    reload: function reload(id) {},
+    send: function send() {
+      var _this = this;
+
+      axios.get(APP_URL + '/api/game/get', {
+        params: {
+          text: this.message
+        }
+      }).then(function (req) {
+        _this.message = '';
+        if (req.data.type == 'error') notifyError(req.data.text);
+      })["catch"](function () {
+        notifyError('API error');
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -2255,6 +2537,29 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2262,39 +2567,84 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       number: 1,
       sum: 0,
       betSum: 0,
-      auto: 0
+      auto: 0,
+      timeLeft: 10,
+      status: 0,
+      bet: null,
+      winSkin: null
     };
   },
   mounted: function mounted() {
-    paintGraph(this.number);
+    var _this = this;
+
+    $(window).resize(function () {
+      if (_this.game.status == "current") paintGraph(0, _this.number);
+    });
     socket.on('timeLeft', function (data) {
-      $('.cg_graph_block .time_left').removeClass('disable');
-      $('.cg_graph_block .time_left span').html(data);
+      _this.timeLeft = data.toFixed(2);
+    });
+    socket.on('newGame', function (data) {
+      clearGraph();
+      store.commit('addGame', _this.game);
+      store.commit('setGame', data);
+      _this.number = 1;
+      _this.bet = null;
+
+      _this.betReSum();
+
+      store.commit('setBets', []);
     });
     socket.on('startGame', function (data) {
-      startX = 0;
-      scaleX = 20;
-      scaleY = 150;
-      cgBetStop();
-      $('#gameid').html(data.id);
-      $('.cg_hash_secret .secret').html('Скрыто');
-      $('.cg_hash_secret .hash').html(data.hash);
+      var g = _this.game;
+      g.status = 'current';
+      store.commit('setGame', g);
+      if (!_this.bet) _this.betSum = 0;
     });
-    socket.on('endGame', function (data) {//paintCrashGraphic(data.x, data.number);
+    socket.on('endGame', function (data) {
+      var g = _this.game;
+      g.salt = data.salt;
+      g.number = data.number;
+      g.status = 'finished';
+      _this.number = data.number;
+
+      if (_this.bet) {
+        if (_this.bet.status == 'win') _this.betSum = _this.bet.win.price;else _this.betSum = 0;
+        store.commit('delSkins', _this.bet.skins);
+      }
+
+      for (var i in data.winSkins) {
+        if (data.winSkins[i].user_id == _this.user.id) {
+          var skin = _this.bet.win;
+          skin.id = data.winSkins[i].skin_id;
+          store.commit('addSkins', [skin]);
+        }
+      }
+
+      store.commit('setGame', g);
+      store.commit('loseBets');
     });
     socket.on('newBet', function (data) {
       store.commit('addBet', data);
-      console.log(data);
+    });
+    socket.on('stopBet', function (data) {
+      store.commit('changeBet', data);
+      _this.winSkin = _this.bet.win;
+    });
+    socket.on('cancelBet', function (data) {
+      store.commit('delBet', data.id);
     });
     socket.on('crashGraph', function (x) {
-      //paintCrashGraphic(x);
-      $('.cg_graph_block .time_left').addClass('disable');
-      cgBetStop();
+      x = parseFloat(x);
+      _this.number = x;
+      if (_this.bet && _this.bet.status == 'ingame') _this.betSum = _this.bet.sum * x;
+      if (_this.bet && _this.bet.status == 'win') _this.betSum = _this.bet.win.price;
+      store.commit('winBets', _this.number);
     });
   },
   watch: {
     bets: function bets(nv, ov) {
       this.sum = 0;
+      if (this.bets.length && this.user.auth && this.bets[0].user.id == this.user.id) this.bet = this.bets[0];
 
       var _iterator = _createForOfIteratorHelper(nv),
           _step;
@@ -2312,29 +2662,83 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     checked: function checked(nv, ov) {
       if (this.game.status == 'created') {
-        this.betSum = 0;
-
-        var _iterator2 = _createForOfIteratorHelper(nv),
-            _step2;
-
-        try {
-          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-            var i = _step2.value;
-            this.betSum += this.skins[i].price;
-          }
-        } catch (err) {
-          _iterator2.e(err);
-        } finally {
-          _iterator2.f();
-        }
+        this.betReSum();
+        this.getWinSkin();
       }
     },
     number: function number() {
-      paintGraph(this.number);
+      paintGraph(0, this.number);
+    },
+    auto: function auto() {
+      this.getWinSkin();
+    },
+    game: function game() {
+      if (this.game.status != 'current') clearGraph();
+    },
+    bet: function bet() {
+      if (this.bet == null) {
+        this.betReSum();
+        this.getWinSkin();
+      } else {
+        this.betSum = this.bet.sum;
+      }
+    },
+    betSum: function betSum() {
+      this.betSum = parseFloat(this.betSum).toFixed(2);
     }
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['role', 'skins', 'bets', 'games', 'game', 'checked'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'skins', 'bets', 'games', 'game', 'checked'])),
   methods: {
+    getWinSkin: function getWinSkin() {
+      var _this2 = this;
+
+      if (this.game.status != 'created' || this.bet != null) return;
+
+      if (this.betSum == 0 || this.auto <= 1 || this.auto > 10000) {
+        this.winSkin = null;
+        return;
+      }
+
+      axios.get(APP_URL + '/api/crash/getWin', {
+        params: {
+          number: this.auto,
+          sum: this.betSum
+        }
+      }).then(function (req) {
+        if (req.config.params.number != _this2.auto || req.config.params.sum != _this2.betSum) return;
+        _this2.winSkin = req.data;
+      })["catch"](function () {
+        notifyError('API error');
+      });
+    },
+    getButtonText: function getButtonText() {
+      if (this.getButtonDisabled()) return "ОЖИДАНИЕ";else if (this.game.status == 'current' && this.bet && (this.bet.number >= this.number || this.bet.number == 0)) return "ОСТАНОВИТЬ";else if (this.game.status == 'created' && this.bet) return "ОТМЕНИТЬ";else return "НАЧАТЬ";
+    },
+    getButtonDisabled: function getButtonDisabled() {
+      if (this.game.status == 'finished' || this.betSum == 0 || this.bet && this.bet.status != 'ingame') return true;else return false;
+    },
+    putAuto: function putAuto(auto) {
+      if (this.game.status != 'created') return;
+      this.auto = auto;
+    },
+    betReSum: function betReSum() {
+      if (this.bet) return;
+      this.betSum = 0;
+
+      var _iterator2 = _createForOfIteratorHelper(this.checked),
+          _step2;
+
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var i = _step2.value;
+          this.betSum += this.skins[i].price;
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
+      }
+    },
     setChecked: function setChecked(checked) {
       this.checked = checked;
     },
@@ -2349,21 +2753,158 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return 'cf-gold';
     },
     newBet: function newBet() {
+      var _this3 = this;
+
       var tBet = [];
 
-      for (var i in this.checked) {
-        tBet.push(this.skins[this.checked[i]].id);
+      var _iterator3 = _createForOfIteratorHelper(this.checked),
+          _step3;
+
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var i = _step3.value;
+          tBet.push(this.skins[i].id);
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
       }
 
       axios.get(APP_URL + '/api/crash/bet', {
         params: {
           skins: JSON.stringify(tBet),
+          number: this.auto
+        }
+      }).then(function (req) {
+        store.commit('setChecked', []);
+        var skins = _this3.skins;
+
+        for (var i in skins) {
+          if (tBet.includes(skins[i].id)) skins[i].ingame = true;
+        }
+
+        store.commit('setSkins', skins);
+        if (req.data.type == 'error') notifyError(req.data.text);
+      })["catch"](function () {
+        notifyError('API error');
+      });
+    },
+    stopBet: function stopBet() {
+      axios.get(APP_URL + '/api/crash/stop', {
+        params: {
           number: this.number
         }
       }).then(function (req) {
-        $.notify(req.data.text);
+        if (req.data.type == 'error') notifyError(req.data.text);
       })["catch"](function () {
-        $.notify('error with api');
+        notifyError('API error');
+      });
+    },
+    cancelBet: function cancelBet() {
+      var _this4 = this;
+
+      axios.get(APP_URL + '/api/crash/cancel', {}).then(function (req) {
+        var skins = _this4.skins;
+
+        for (var i in skins) {
+          skins[i].ingame = false;
+        }
+
+        store.commit('setSkins', skins);
+        _this4.bet = null;
+        if (req.data.type == 'error') notifyError(req.data.text);
+      })["catch"](function () {
+        notifyError('API error');
+      });
+    },
+    press: function press() {
+      if (this.game.status == 'created' && !this.bet) this.newBet();else if (this.game.status == 'created') this.cancelBet();else if (this.game.status == 'current') this.stopBet();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/support.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/components/pages/support.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      ticketMessage: '',
+      ticketName: ''
+    };
+  },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['tickets'])),
+  watch: {},
+  methods: {
+    send: function send() {
+      var _this = this;
+
+      if (this.ticketMessage == '' || this.ticketName == '') return;
+      axios.get(APP_URL + '/api/ticket/new', {
+        params: {
+          name: this.ticketName,
+          text: this.ticketMessage
+        }
+      }).then(function (req) {
+        _this.ticketName = '';
+        _this.ticketMessage = '';
+        if (req.data.type == 'error') notifyError(req.data.text);
+      })["catch"](function () {
+        notifyError('API error');
       });
     }
   }
@@ -2466,6 +3007,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2479,11 +3022,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       page: 1,
       min: null,
       max: null,
-      name: null,
+      query: '',
       loading: true
     };
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['role', 'skins', 'money'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['user', 'skins', 'money'])),
   created: function created() {
     var _this = this;
 
@@ -2495,7 +3038,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       });
       $(document).mouseup(function (e) {
-        var div = $("#skins-modal");
+        var div = $("#skins");
 
         if (!div.is(e.target) && div.has(e.target).length === 0 && _this.isBuy) {
           _this.changeBuy();
@@ -2530,6 +3073,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.remain = this.sum + this.money - s;
+    },
+    '$store.state.checked': function $storeStateChecked(nv) {
+      this.checked = nv;
     }
   },
   methods: {
@@ -2542,11 +3088,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.loadMore();
     },
     checkAll: function checkAll() {
-      if (this.checked.length == this.skins.length) this.checked = [];else {
+      var sum = 0;
+
+      for (var i in this.skins) {
+        if (!this.skins[i].ingame) sum++;
+      }
+
+      if (this.checked.length == sum) this.checked = [];else {
         var a = [];
 
         for (var i in this.skins) {
-          a.push(i);
+          if (!this.skins[i].ingame) a.push(i);
         }
 
         this.checked = a;
@@ -2554,7 +3106,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     changeBuy: function changeBuy() {
       if (this.isBuy == false) {
-        this.max = (this.sum + this.money).toFixed(2);
+        this.max = this.sum + this.money;
         this.reload();
       }
 
@@ -2566,19 +3118,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       axios.get(APP_URL + '/api/skins/get?page=' + this.page, {
         params: {
           min: this.min,
-          max: this.max,
-          name: this.name
+          max: this.max ? this.max : 1000000000,
+          query: this.query
         }
       }).then(function (req) {
         var pas = req.config.params;
-        if (pas.max != _this2.max || pas.min != _this2.min || pas.name != _this2.name || req.data.current_page != _this2.page) return;
+        if (pas.max != _this2.max || pas.min != _this2.min || pas.query != _this2.query || req.data.current_page != _this2.page) return;
         _this2.loadedSkins = _this2.loadedSkins.concat(req.data.data);
         _this2.page++;
         _this2.loading = false;
+      })["catch"](function () {
+        notifyError('API error');
       });
     },
-    withdraw: function withdraw() {
-      console.log(this.min);
+    withdraw: function withdraw() {// if(req.data.type == 'success')
+      //     notifySuccess(req.data.text);
+      // else
+      //     notifyError(req.data.text);
     },
     buySkins: function buySkins() {
       var _this3 = this;
@@ -2604,10 +3160,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       }).then(function (req) {
         if (req.data.type == 'error') {
-          notifyError('ERROR');
+          notifyError(req.data.text);
         } else if (req.data.type == 'success') {
-          notifySuccess('OK');
-
           _this3.$store.commit('delSkins', req.data.del);
 
           _this3.$store.commit('addSkins', req.data.add);
@@ -2619,7 +3173,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this3.checked = [];
       })["catch"](function () {
-        notifyError('ERROR');
+        notifyError('API error');
       });
     }
   }
@@ -24161,7 +24715,9 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("span", [_vm._v(_vm._s(_vm.displayNumber))])
+  return _c("span", [
+    _vm._v(_vm._s((_vm.displayNumber / Math.pow(10, _vm.tof)).toFixed(_vm.tof)))
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -24185,82 +24741,129 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "chat" }, [
-      _c("div", { staticClass: "chat-header" }, [
+  return _c("div", { staticClass: "chat" }, [
+    _c(
+      "div",
+      { staticClass: "chat-header" },
+      [
         _c("i", { staticClass: "fas fa-comments chat-header-icon" }),
         _vm._v(" "),
         _c("div", { staticClass: "chat-header-text" }, [_vm._v("ОНЛАЙН ЧАТ")]),
         _vm._v(" "),
-        _c("div", { staticClass: "chat-header-rules" }, [_vm._v("правила")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "chat-body" }, [
-        _c("div", { staticClass: "chat-inner" }, [
-          _c("div", { staticClass: "chat-message" }, [
-            _c("a", { attrs: { href: "#" } }, [
-              _c("img", {
-                staticClass: "chat-image",
-                attrs: { src: "img/ava.jpg" }
-              })
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "chat-block" }, [
-              _c("div", { staticClass: "chat-nameblock" }, [
-                _c("a", { staticClass: "chat-name", attrs: { href: "#" } }, [
-                  _vm._v("vanchenkin")
+        _c(
+          "router-link",
+          {
+            staticClass: "chat-header-rules",
+            attrs: { to: { path: "/chatrules" } }
+          },
+          [_vm._v("правила")]
+        )
+      ],
+      1
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "chat-body" }, [
+      _c(
+        "div",
+        { staticClass: "chat-inner", attrs: { id: "chat" } },
+        _vm._l(_vm.messages, function(message) {
+          return _c(
+            "div",
+            {
+              key: message.id,
+              staticClass: "chat-message",
+              class: { reversed: _vm.user.id == message.user.id }
+            },
+            [
+              _c(
+                "router-link",
+                {
+                  attrs: {
+                    to: { name: "user", params: { id: message.user.id } }
+                  }
+                },
+                [
+                  _c("img", {
+                    staticClass: "chat-image",
+                    attrs: { src: message.user.image }
+                  })
+                ]
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "chat-block" }, [
+                _c("div", { staticClass: "chat-nameblock" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "chat-name",
+                      on: {
+                        click: function($event) {
+                          return _vm.reply(message.user.name)
+                        }
+                      }
+                    },
+                    [_vm._v(_vm._s(message.user.name))]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "chat-time" }, [
+                    _vm._v(_vm._s(message.time))
+                  ])
                 ]),
                 _vm._v(" "),
-                _c("div", { staticClass: "chat-time" }, [_vm._v("17:27")])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "chat-text" }, [_vm._v("Всем привет!")])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "chat-message reversed" }, [
-            _c("img", {
-              staticClass: "chat-image",
-              attrs: { src: "img/ava.jpg" }
-            }),
-            _vm._v(" "),
-            _c("div", { staticClass: "chat-block" }, [
-              _c("div", { staticClass: "chat-nameblock" }, [
-                _c("div", { staticClass: "chat-name" }, [_vm._v("vanchenkin")]),
-                _vm._v(" "),
-                _c("div", { staticClass: "chat-time" }, [_vm._v("17:27")])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "chat-text" }, [_vm._v("Всем привет!")])
-            ])
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "chat-send" }, [
-        _c("input", {
-          staticClass: "chat-send-input",
-          attrs: {
-            type: "text",
-            name: "message",
-            placeholder: "Введите сообщение",
-            autocomplete: "off"
-          }
+                _c("div", { staticClass: "chat-text" }, [
+                  _vm._v(_vm._s(message.text))
+                ])
+              ])
+            ],
+            1
+          )
         }),
-        _vm._v(" "),
-        _c("div", { staticClass: "button chat-send-button" }, [
-          _c("i", { staticClass: "fas fa-arrow-right chat-send-icon" })
-        ])
-      ])
+        0
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "chat-send" }, [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.message,
+            expression: "message"
+          }
+        ],
+        staticClass: "chat-send-input",
+        attrs: {
+          type: "text",
+          name: "message",
+          placeholder: "Введите сообщение",
+          maxlength: "100",
+          autocomplete: "off"
+        },
+        domProps: { value: _vm.message },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.message = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "button chat-send-button",
+          class: { "button-disabled": _vm.message == "" },
+          on: { click: _vm.send }
+        },
+        [_c("i", { staticClass: "fas fa-arrow-right chat-send-icon" })]
+      )
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -24282,52 +24885,118 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "draw" }, [
+    _c("div", { staticClass: "draw-header" }, [
+      _c("i", { staticClass: "fas fa-trophy draw-header-icon" }),
+      _vm._v(" "),
+      _c("div", { staticClass: "draw-header-text" }, [
+        _vm._v("БЕСПЛАТНЫЙ РОЗЫГРЫШ")
+      ]),
+      _vm._v(" "),
+      _vm.draw && _vm.draw.time > 0
+        ? _c("div", { staticClass: "draw-header-time" }, [
+            _vm._v(
+              "\n            " +
+                _vm._s(("00" + ((_vm.time / 60 / 60) >> 0)).slice(-2)) +
+                ":" +
+                _vm._s(("00" + (((_vm.time / 60) >> 0) % 60)).slice(-2)) +
+                ":" +
+                _vm._s(("00" + ((_vm.time >> 0) % 60)).slice(-2)) +
+                "\n        "
+            )
+          ])
+        : _vm._e()
+    ]),
+    _vm._v(" "),
+    _vm.draw && _vm.draw.time > 0
+      ? _c("div", { staticClass: "draw-body" }, [
+          _c("img", {
+            staticClass: "draw-body-image",
+            class: "r-" + _vm.draw.skin.rarity,
+            attrs: { src: _vm.draw.skin.image }
+          }),
+          _vm._v(" "),
+          _c("div", { staticClass: "draw-body-r" }, [
+            _c("div", { staticClass: "draw-body-text" }, [
+              _vm._v(_vm._s(_vm.draw.skin.weapon))
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "draw-body-stext" }, [
+              _vm._v(_vm._s(_vm.draw.skin.name.toUpperCase()))
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "draw-body-ttext" }, [
+              _vm._v(_vm._s(_vm.draw.skin.quality))
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "button draw-body-button",
+                class: { disabled: _vm.draw.take },
+                on: { click: _vm.take }
+              },
+              [_vm._v(_vm._s(_vm.draw.take ? "УЧАСТВУЕМ" : "УЧАСТВОВАТЬ"))]
+            )
+          ])
+        ])
+      : _c("div", { staticClass: "draw-no" }, [
+          _c("i", { staticClass: "fas fa-hand-paper draw-no-icon" }),
+          _vm._v(" "),
+          _vm._m(0)
+        ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "draw-count" }, [
+      _c("div", { staticClass: "draw-count-text" }, [_vm._v("УЧАСТНИКОВ")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "draw-count-c" }, [
+        _vm._v(_vm._s(_vm.draw && _vm.draw.time > 0 ? _vm.count : "НЕТ"))
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "draw-last" }, [
+      _c("div", { staticClass: "draw-last-text" }, [
+        _vm._v("ПОСЛЕДНИЙ ПОБЕДИТЕЛЬ")
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "draw-last-c" },
+        [
+          _vm.draw && _vm.draw.last_winner
+            ? _c(
+                "router-link",
+                {
+                  attrs: {
+                    to: {
+                      name: "user",
+                      params: { id: _vm.draw.last_winner.id }
+                    }
+                  }
+                },
+                [
+                  _c("img", {
+                    staticClass: "draw-last-image",
+                    attrs: { src: _vm.draw.last_winner.image }
+                  })
+                ]
+              )
+            : [_vm._v("НЕТ")]
+        ],
+        2
+      )
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "draw" }, [
-      _c("div", { staticClass: "draw-header" }, [
-        _c("i", { staticClass: "fas fa-trophy draw-header-icon" }),
-        _vm._v(" "),
-        _c("div", { staticClass: "draw-header-text" }, [
-          _vm._v("БЕСПЛАТНЫЙ РОЗЫГРЫШ")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "draw-header-time" }, [_vm._v("12:23")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "draw-body" }, [
-        _c("img", {
-          staticClass: "draw-body-image",
-          attrs: { src: "img/draw.png" }
-        }),
-        _vm._v(" "),
-        _c("div", { staticClass: "draw-body-r" }, [
-          _c("div", { staticClass: "draw-body-text" }, [_vm._v("AWP")]),
-          _vm._v(" "),
-          _c("div", { staticClass: "draw-body-stext" }, [
-            _vm._v("ИСТОРИЯ О ДРАКОНЕ")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "draw-body-ttext" }, [
-            _vm._v("(WELL-WORN)")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "button draw-body-button" }, [
-            _vm._v("УЧАСТВОВАТЬ")
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "draw-count" }, [
-        _c("div", { staticClass: "draw-count-text" }, [_vm._v("УЧАСТНИКОВ")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "draw-count-c" }, [_vm._v("12")])
-      ])
+    return _c("div", { staticClass: "draw-no-text" }, [
+      _vm._v("\n            В ДАННЫЙ МОМЕНТ"),
+      _c("br"),
+      _vm._v(" КОНКУРС НЕ ПРОВОДИТСЯ\n        ")
     ])
   }
 ]
@@ -24473,6 +25142,47 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/chatrules.vue?vue&type=template&id=4ecf895a&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/components/pages/chatrules.vue?vue&type=template&id=4ecf895a& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "content" }, [
+      _c("h1", [_vm._v("Пользовательское соглашение")]),
+      _vm._v(" "),
+      _c("p", [
+        _vm._v(
+          "Настоящее Соглашение определяет условия использования Пользователями материалов и сервисов сайта www.csgocrash.org (далее — «Сайт»)."
+        )
+      ]),
+      _vm._v(" "),
+      _c("p")
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/fair.vue?vue&type=template&id=5bc3a2a0&":
 /*!**********************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/components/pages/fair.vue?vue&type=template&id=5bc3a2a0& ***!
@@ -24488,9 +25198,37 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "content" }, [_vm._v("FAIR")])
+  return _c("div", { staticClass: "content" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "footer" }, [
+      _c(
+        "div",
+        { staticClass: "footer-right" },
+        [
+          _c(
+            "router-link",
+            { staticClass: "agreement", attrs: { to: { path: "/agreement" } } },
+            [_vm._v("Пользовательское соглашение")]
+          )
+        ],
+        1
+      )
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "page" }, [
+      _c("div", { staticClass: "page-header" }, [_vm._v("О честности сайта")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "page-body" })
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -24512,9 +25250,215 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "content" }, [_vm._v("FAQ")])
+  return _c("div", { staticClass: "content" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "footer" }, [
+      _c(
+        "div",
+        { staticClass: "footer-right" },
+        [
+          _c(
+            "router-link",
+            { staticClass: "agreement", attrs: { to: { path: "/agreement" } } },
+            [_vm._v("Пользовательское соглашение")]
+          )
+        ],
+        1
+      )
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "page" }, [
+      _c("div", { staticClass: "page-header" }, [_vm._v("FAQ")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "page-body" }, [
+        _c("div", { staticClass: "page-scroll" }, [
+          _c("div", { staticClass: "accordion" }, [_vm._v("Общее положение")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel" }, [
+            _vm._v(
+              "\n\t\t\t\t\tНезнание или непонимание правил не освобождает от ответственности за их несоблюдение\n\t\t\t\t"
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "accordion" }, [_vm._v("Общение в игре")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel" }, [
+            _c("p", [
+              _vm._v(
+                "Запрещено оскорбление других игроков, злоупотребление нецензурными выражениями в чате и употребление нецензурных выражений при использовании\n\t\t\t\t\tмикрофона (оскорбления игроков либо их родителей запрещены в любой форме; выражение эмоций посредством нецензурных выражений допустимо в разумных пределах)"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Запрещено многократное повторение одной и той же фразы в чате (flood)"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Запрещено при использовании микрофона захламлять эфир разговорами, не относящимися к игре"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Запрещено употребление выражений и имен, направленных на разжигание межнациональной и межконфессиональной (или иного вида) розни"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Запрещено преднамеренное и умышленное использование заведомо чужих имен и их очевидных производных с целью навредить репутации их реальных хозяев разного рода действиями"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Провокация игроков, направленная на действия нарушающие правила, запрещена в любой форме"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "В микрофон игрок имеет право говорить только с 15 лет(при адекватном поведении можно и раньше)"
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "accordion" }, [_vm._v("Читерство")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel" }, [
+            _c("p", [
+              _vm._v(
+                "Запрещено использование всякого рода читов(cheats), в том числе с целью тестирования самого чита или античитерской программы"
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "accordion" }, [_vm._v("Игровой процесс")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel" }, [
+            _c("p", [_vm._v("Запрещено злостное кемперство")]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Котегоричесски запрещено Мониторить(говорить информацию о местоположение игрока, но разрешено говорить последнюю информацию о местоположение)"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v("Запрещено комментировать Игровые моменты - ситуацию")
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "accordion" }, [
+            _vm._v("Администратор сервера обязан")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel" }, [
+            _c("p", [_vm._v("Знать и соблюдать общие правила серверов")]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Использовать полномочия администратора исключительно в интересах поддержания порядка в ходе игрового процесса и нормального функционирования сервера"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Поддерживать игровой процесс на сервере в состоянии, удовлетворяющем большинство игроков"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Принимать меры дисциплинарного воздействия на игроков, препятствующих нормальному ходу игрового процесса"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Пресекать все виды рекламы и не допускать указных действий со своей стороны(разрешено сайты как cs.money и тому подобное)"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [_vm._v("Прислушиваться к мнению игроков")]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Перед тем как менять карту, необходимо сделать голосование"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Прежде чем выдать игроку бан – собрать на него неопровержимые доказательства"
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "accordion" }, [
+            _vm._v("Администраторам сервера запрещено")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel" }, [
+            _c("p", [
+              _vm._v(
+                "Оскорблять игроков, грубить и провоцировать игроков на оскорбления"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [_vm._v("Издеваться над игроками")]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Использовать команды которые мешают игровому процессу и дающие преимущество игроку"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "Администратору сервера запрещается менять игровой никнейм (Никнейм должен оставаться таким же как и при покупке прав администратора, при смене сообщить главным администраторам)"
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "accordion" }, [
+            _vm._v("Администраторские права снимаются")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel" }, [
+            _c("p", [_vm._v("По решению главного администратора")]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v("При многочисленных жалобах со стороны других игроков")
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v("При многочисленном нарушении или несоблюдении правил")
+            ]),
+            _vm._v(" "),
+            _c("p", [
+              _vm._v(
+                "В случае не появления админа на сервере более 15 суток, при условии что это не было оговорено заранее с главным админом"
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", [_vm._v("По общему решению с другими админами")])
+          ])
+        ])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -24536,7 +25480,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("p", [_vm._v("This is the FAQ")])
+  return _c("div", { staticClass: "content" })
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -24569,9 +25513,29 @@ var render = function() {
             attrs: { id: "graph" }
           }),
           _vm._v(" "),
-          _c("div", { staticClass: "graph-number" }, [
-            _vm._v(_vm._s(_vm.number.toFixed(2)))
-          ])
+          _c(
+            "div",
+            {
+              staticClass: "graph-number",
+              class: { lose: _vm.game.status == "finished" }
+            },
+            [
+              _vm.game.status != "created"
+                ? [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(_vm.number.toFixed(2)) +
+                        "x\n                    "
+                    )
+                  ]
+                : [
+                    _c("animatedNumber", {
+                      attrs: { number: _vm.timeLeft * 100, tof: 2, back: false }
+                    })
+                  ]
+            ],
+            2
+          )
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "stats" }, [
@@ -24589,7 +25553,9 @@ var render = function() {
                   { staticClass: "stat-value" },
                   [
                     _vm._v("$ "),
-                    _c("animatedNumber", { attrs: { number: _vm.sum } })
+                    _c("animatedNumber", {
+                      attrs: { number: _vm.sum * 100, tof: 2 }
+                    })
                   ],
                   1
                 )
@@ -24617,7 +25583,39 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "right" }, [
-        _vm._m(0),
+        _c(
+          "div",
+          { staticClass: "skin" },
+          [
+            _c("div", { staticClass: "skin-circle skin-i1" }),
+            _vm._v(" "),
+            _c("div", { staticClass: "skin-circle skin-i2" }),
+            _vm._v(" "),
+            _c("div", { staticClass: "skin-circle skin-i3" }),
+            _vm._v(" "),
+            _c("div", { staticClass: "skin-circle skin-i4" }),
+            _vm._v(" "),
+            _vm.winSkin
+              ? [
+                  _c("img", {
+                    staticClass: "skin-image",
+                    class: "r-" + _vm.winSkin.rarity,
+                    attrs: { src: _vm.winSkin.image }
+                  }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "tooltip" }, [
+                    _vm._v(_vm._s(_vm.getFull(_vm.winSkin)))
+                  ])
+                ]
+              : [
+                  _c("img", {
+                    staticClass: "skin-image r-knife",
+                    attrs: { src: "img/skin.png" }
+                  })
+                ]
+          ],
+          2
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "auto-text" }, [_vm._v("АВТО-ВЫВОД")]),
         _vm._v(" "),
@@ -24635,7 +25633,8 @@ var render = function() {
             attrs: {
               placeholder: "0.00",
               autocomplete: "off",
-              id: "bet-input"
+              id: "bet-input",
+              disabled: _vm.game.status != "created"
             },
             domProps: { value: _vm.auto },
             on: {
@@ -24648,23 +25647,35 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _c("div", { staticClass: "button bet-button" }, [
-            _c("div", { staticClass: "bet-button-text" }, [
-              _vm._v(
-                _vm._s(_vm.game.status == "current" ? "ОСТАНОВИТЬ" : "НАЧАТЬ")
+          _c(
+            "div",
+            {
+              staticClass: "button bet-button",
+              class: { "button-disabled": _vm.getButtonDisabled() },
+              on: { click: _vm.press }
+            },
+            [
+              _c("div", { staticClass: "bet-button-text" }, [
+                _vm._v(
+                  "\n                        " +
+                    _vm._s(_vm.getButtonText()) +
+                    "\n                    "
+                )
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "bet-button-money" },
+                [
+                  _vm._v("$ "),
+                  _c("animatedNumber", {
+                    attrs: { number: _vm.betSum * 100, tof: 2 }
+                  })
+                ],
+                1
               )
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "bet-button-money" },
-              [
-                _vm._v("$ "),
-                _c("animatedNumber", { attrs: { number: _vm.betSum } })
-              ],
-              1
-            )
-          ])
+            ]
+          )
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "autos" }, [
@@ -24675,7 +25686,7 @@ var render = function() {
               class: { ac: _vm.auto == 0 },
               on: {
                 click: function($event) {
-                  _vm.auto = 0
+                  return _vm.putAuto(0)
                 }
               }
             },
@@ -24689,7 +25700,7 @@ var render = function() {
               class: { ac: _vm.auto == 1.2 },
               on: {
                 click: function($event) {
-                  _vm.auto = 1.2
+                  return _vm.putAuto(1.2)
                 }
               }
             },
@@ -24703,7 +25714,7 @@ var render = function() {
               class: { ac: _vm.auto == 1.3 },
               on: {
                 click: function($event) {
-                  _vm.auto = 1.3
+                  return _vm.putAuto(1.3)
                 }
               }
             },
@@ -24717,7 +25728,7 @@ var render = function() {
               class: { ac: _vm.auto == 1.5 },
               on: {
                 click: function($event) {
-                  _vm.auto = 1.5
+                  return _vm.putAuto(1.5)
                 }
               }
             },
@@ -24731,7 +25742,7 @@ var render = function() {
               class: { ac: _vm.auto == 2 },
               on: {
                 click: function($event) {
-                  _vm.auto = 2
+                  return _vm.putAuto(2)
                 }
               }
             },
@@ -24762,51 +25773,51 @@ var render = function() {
     _c(
       "div",
       { staticClass: "bets" },
-      _vm._l(_vm.bets, function(bet) {
+      _vm._l(_vm.bets, function(b) {
         return _c(
           "div",
-          { key: bet.id, staticClass: "bet", class: bet.status },
+          { key: b.id, staticClass: "bet", class: b.status },
           [
             _c(
               "router-link",
-              { attrs: { to: { name: "user", params: { id: bet.user.id } } } },
+              { attrs: { to: { name: "user", params: { id: b.user.id } } } },
               [
                 _c("img", {
                   staticClass: "bet-image",
-                  attrs: { src: bet.user.image }
+                  attrs: { src: b.user.image }
                 })
               ]
             ),
             _vm._v(" "),
             _c("div", { staticClass: "bet-money" }, [
-              _vm._v("$ " + _vm._s(bet.sum))
+              _vm._v("$ " + _vm._s(b.sum.toFixed(2)))
             ]),
             _vm._v(" "),
             _c(
               "div",
               { staticClass: "bet-skins" },
               [
-                _vm._l(bet.skins.slice(0, 3), function(skin) {
+                _vm._l(b.skins.slice(0, 3), function(skin) {
                   return _c(
                     "div",
                     { key: skin.id, staticClass: "bet-skins-item" },
                     [
                       _c("img", {
                         staticClass: "bet-skin",
-                        class: "r-" + skin.skin.rarity,
-                        attrs: { src: skin.skin.image }
+                        class: "r-" + skin.rarity,
+                        attrs: { src: skin.image }
                       }),
                       _vm._v(" "),
                       _c("div", { staticClass: "tooltip" }, [
-                        _vm._v(_vm._s(_vm.getFull(skin.skin)))
+                        _vm._v(_vm._s(_vm.getFull(skin)))
                       ])
                     ]
                   )
                 }),
                 _vm._v(" "),
-                bet.skins.length > 3
+                b.skins.length > 3
                   ? _c("div", { staticClass: "bet-addskin" }, [
-                      _vm._v("+" + _vm._s(bet.skins.length - 3))
+                      _vm._v("+" + _vm._s(b.skins.length - 3))
                     ])
                   : _vm._e()
               ],
@@ -24816,32 +25827,38 @@ var render = function() {
             _c("div", { staticClass: "bet-coef" }, [
               _vm._v(
                 _vm._s(
-                  bet.status == "ingame"
+                  b.status == "ingame"
                     ? "В ИГРЕ"
-                    : bet.status == "lose"
+                    : b.status == "lose"
                     ? "КРАШ"
-                    : bet.number
+                    : b.number.toFixed(2) + "x"
                 )
               )
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "bet-win" }, [
-              _vm._v("$ " + _vm._s(bet.win.price))
-            ]),
-            _vm._v(" "),
-            _vm._l(bet.skins.slice(0, 3), function(skin) {
-              return _c("div", { key: skin.id, staticClass: "bet-win-item" }, [
-                _c("img", {
-                  staticClass: "bet-win-image",
-                  class: "r-" + bet.win.rarity,
-                  attrs: { src: bet.win.image }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "tooltip" }, [
-                  _vm._v(_vm._s(_vm.getFull(bet.win)))
-                ])
-              ])
-            })
+            b.win
+              ? [
+                  _c("div", { staticClass: "bet-win" }, [
+                    _vm._v("$ " + _vm._s(b.win.price.toFixed(2)))
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "bet-win-item" }, [
+                    _c("img", {
+                      staticClass: "bet-win-image",
+                      class: "r-" + b.win.rarity,
+                      attrs: { src: b.win.image }
+                    }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "tooltip" }, [
+                      _vm._v(_vm._s(_vm.getFull(b.win)))
+                    ])
+                  ])
+                ]
+              : [
+                  _c("div", { staticClass: "bet-win" }),
+                  _vm._v(" "),
+                  _vm._m(0, true)
+                ]
           ],
           2
         )
@@ -24882,19 +25899,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "skin" }, [
-      _c("div", { staticClass: "skin-circle skin-i1" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "skin-circle skin-i2" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "skin-circle skin-i3" }),
-      _vm._v(" "),
-      _c("div", { staticClass: "skin-circle skin-i4" }),
-      _vm._v(" "),
-      _c("img", {
-        staticClass: "skin-image r-knife",
-        attrs: { src: "img/skin.png" }
-      })
+    return _c("div", { staticClass: "bet-win-item" }, [
+      _c("img", { staticClass: "bet-win-image" })
     ])
   }
 ]
@@ -24919,7 +25925,154 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "content" }, [_vm._v("SUPPORT")])
+  return _c("div", { staticClass: "content support" }, [
+    _c("div", { staticClass: "page" }, [
+      _c("div", { staticClass: "page-header" }, [
+        _vm._v("Техническая поддержка")
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "page-body" },
+        [
+          _vm.tickets.length
+            ? [
+                _c(
+                  "div",
+                  { staticClass: "tickets" },
+                  _vm._l(_vm.tickets, function(ticket) {
+                    return _c(
+                      "div",
+                      { key: ticket.id, staticClass: "ticket" },
+                      [
+                        _c("div", { staticClass: "ticket-left" }, [
+                          _c("div", { staticClass: "ticket-name" }, [
+                            _vm._v(_vm._s(ticket.name))
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "ticket-text" }, [
+                            _vm._v(_vm._s(ticket.text))
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "ticket-right" }, [
+                          _c("div", { staticClass: "ticket-status" }, [
+                            _vm._v(
+                              _vm._s(
+                                ticket.status == "opened" ? "Открыт" : "Закрыт"
+                              )
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "ticket-time" }, [
+                            _vm._v(_vm._s(ticket.created_at))
+                          ])
+                        ])
+                      ]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "ticket-new" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.ticketName,
+                        expression: "ticketName"
+                      }
+                    ],
+                    staticClass: "ticket-new-input",
+                    attrs: {
+                      type: "text",
+                      name: "name",
+                      placeholder: "Введите имя",
+                      maxlength: "100",
+                      autocomplete: "off"
+                    },
+                    domProps: { value: _vm.ticketName },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.ticketName = $event.target.value
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.ticketText,
+                        expression: "ticketText"
+                      }
+                    ],
+                    staticClass: "ticket-new-input",
+                    attrs: {
+                      type: "text",
+                      name: "text",
+                      placeholder: "Введите текст",
+                      maxlength: "500",
+                      autocomplete: "off"
+                    },
+                    domProps: { value: _vm.ticketText },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.ticketText = $event.target.value
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "button ticket-new-button",
+                      class: { "button-disabled": _vm.message == "" },
+                      on: { click: _vm.send }
+                    },
+                    [
+                      _c("i", {
+                        staticClass: "fas fa-arrow-right ticket-new-icon"
+                      })
+                    ]
+                  )
+                ])
+              ]
+            : [
+                _c("div", { staticClass: "support-guest" }, [
+                  _vm._v(
+                    "Для использования технической поддержки необходимо войти"
+                  )
+                ])
+              ]
+        ],
+        2
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "footer" }, [
+      _c(
+        "div",
+        { staticClass: "footer-right" },
+        [
+          _c(
+            "router-link",
+            { staticClass: "agreement", attrs: { to: { path: "/agreement" } } },
+            [_vm._v("Пользовательское соглашение")]
+          )
+        ],
+        1
+      )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -24967,7 +26120,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "skins-block" }, [
+  return _c("div", { staticClass: "skins-block", attrs: { id: "skins" } }, [
     _c("div", { staticClass: "skins-top" }, [
       _c("div", { staticClass: "skins-m" }, [
         _c("div", { staticClass: "skins-bal" }, [
@@ -25012,7 +26165,7 @@ var render = function() {
               staticClass: "skins-input hidden",
               attrs: {
                 type: "checkbox",
-                id: skin.id,
+                id: id,
                 disabled:
                   (_vm.isBuy &&
                     _vm.remain < skin.price &&
@@ -25057,20 +26210,21 @@ var render = function() {
                     (_vm.isBuy &&
                       _vm.remain < skin.price &&
                       _vm.checked.indexOf(id) != -1) ||
-                    skin.status == "bet"
+                    skin.ingame
                 },
-                attrs: { for: skin.id }
+                attrs: { for: id }
               },
               [
                 _c("div", { staticClass: "skins-price" }, [
                   _vm._v("$ " + _vm._s(skin.price.toFixed(2)))
                 ]),
                 _vm._v(" "),
-                _c("img", {
-                  staticClass: "skins-image",
-                  class: "r-" + skin.rarity,
-                  attrs: { src: skin.image }
-                }),
+                _c("span", { staticClass: "skins-image" }, [
+                  _c("img", {
+                    class: "r-" + skin.rarity,
+                    attrs: { src: skin.image }
+                  })
+                ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "skins-weapon" }, [
                   _vm._v(_vm._s(skin.weapon))
@@ -25110,11 +26264,7 @@ var render = function() {
     _vm._v(" "),
     _c(
       "div",
-      {
-        staticClass: "skins-modal blur",
-        class: { hidden: !_vm.isBuy },
-        attrs: { id: "skins-modal" }
-      },
+      { staticClass: "skins-modal blur", class: { hidden: !_vm.isBuy } },
       [
         _c("div", { staticClass: "skins-modal-content" }, [
           _c("div", { staticClass: "skins-modal-top" }, [
@@ -25132,20 +26282,20 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.name,
-                    expression: "name"
+                    value: _vm.query,
+                    expression: "query"
                   }
                 ],
                 staticClass: "skins-sort-name skins-sort-input",
                 attrs: { type: "text", placeholder: "Введите название" },
-                domProps: { value: _vm.name },
+                domProps: { value: _vm.query },
                 on: {
                   input: [
                     function($event) {
                       if ($event.target.composing) {
                         return
                       }
-                      _vm.name = $event.target.value
+                      _vm.query = $event.target.value
                     },
                     function($event) {
                       return _vm.reload()
@@ -42121,6 +43271,7 @@ __webpack_require__.r(__webpack_exports__);
 var map = {
 	"./404.vue": "./resources/components/pages/404.vue",
 	"./agreement.vue": "./resources/components/pages/agreement.vue",
+	"./chatrules.vue": "./resources/components/pages/chatrules.vue",
 	"./fair.vue": "./resources/components/pages/fair.vue",
 	"./faq.vue": "./resources/components/pages/faq.vue",
 	"./game.vue": "./resources/components/pages/game.vue",
@@ -42257,6 +43408,59 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/components/pages/chatrules.vue":
+/*!**************************************************!*\
+  !*** ./resources/components/pages/chatrules.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _chatrules_vue_vue_type_template_id_4ecf895a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chatrules.vue?vue&type=template&id=4ecf895a& */ "./resources/components/pages/chatrules.vue?vue&type=template&id=4ecf895a&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+var script = {}
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
+  script,
+  _chatrules_vue_vue_type_template_id_4ecf895a___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _chatrules_vue_vue_type_template_id_4ecf895a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/components/pages/chatrules.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/components/pages/chatrules.vue?vue&type=template&id=4ecf895a&":
+/*!*********************************************************************************!*\
+  !*** ./resources/components/pages/chatrules.vue?vue&type=template&id=4ecf895a& ***!
+  \*********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_chatrules_vue_vue_type_template_id_4ecf895a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./chatrules.vue?vue&type=template&id=4ecf895a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/chatrules.vue?vue&type=template&id=4ecf895a&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_chatrules_vue_vue_type_template_id_4ecf895a___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_chatrules_vue_vue_type_template_id_4ecf895a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/components/pages/fair.vue":
 /*!*********************************************!*\
   !*** ./resources/components/pages/fair.vue ***!
@@ -42267,15 +43471,17 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _fair_vue_vue_type_template_id_5bc3a2a0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fair.vue?vue&type=template&id=5bc3a2a0& */ "./resources/components/pages/fair.vue?vue&type=template&id=5bc3a2a0&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _fair_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fair.vue?vue&type=script&lang=js& */ "./resources/components/pages/fair.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
-var script = {}
+
+
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  script,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _fair_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _fair_vue_vue_type_template_id_5bc3a2a0___WEBPACK_IMPORTED_MODULE_0__["render"],
   _fair_vue_vue_type_template_id_5bc3a2a0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -42289,6 +43495,20 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 if (false) { var api; }
 component.options.__file = "resources/components/pages/fair.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/components/pages/fair.vue?vue&type=script&lang=js&":
+/*!**********************************************************************!*\
+  !*** ./resources/components/pages/fair.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_fair_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./fair.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/fair.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_fair_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -42314,21 +43534,24 @@ __webpack_require__.r(__webpack_exports__);
 /*!********************************************!*\
   !*** ./resources/components/pages/faq.vue ***!
   \********************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _faq_vue_vue_type_template_id_1a76e96c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./faq.vue?vue&type=template&id=1a76e96c& */ "./resources/components/pages/faq.vue?vue&type=template&id=1a76e96c&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _faq_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./faq.vue?vue&type=script&lang=js& */ "./resources/components/pages/faq.vue?vue&type=script&lang=js&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _faq_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _faq_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
-var script = {}
+
+
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  script,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _faq_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _faq_vue_vue_type_template_id_1a76e96c___WEBPACK_IMPORTED_MODULE_0__["render"],
   _faq_vue_vue_type_template_id_1a76e96c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -42342,6 +43565,20 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 if (false) { var api; }
 component.options.__file = "resources/components/pages/faq.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/components/pages/faq.vue?vue&type=script&lang=js&":
+/*!*********************************************************************!*\
+  !*** ./resources/components/pages/faq.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_faq_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./faq.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/faq.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_faq_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -42373,15 +43610,17 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _game_vue_vue_type_template_id_6c7dff24___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game.vue?vue&type=template&id=6c7dff24& */ "./resources/components/pages/game.vue?vue&type=template&id=6c7dff24&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _game_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game.vue?vue&type=script&lang=js& */ "./resources/components/pages/game.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
-var script = {}
+
+
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  script,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _game_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _game_vue_vue_type_template_id_6c7dff24___WEBPACK_IMPORTED_MODULE_0__["render"],
   _game_vue_vue_type_template_id_6c7dff24___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -42395,6 +43634,20 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 if (false) { var api; }
 component.options.__file = "resources/components/pages/game.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/components/pages/game.vue?vue&type=script&lang=js&":
+/*!**********************************************************************!*\
+  !*** ./resources/components/pages/game.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_game_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./game.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/game.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_game_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -42495,15 +43748,17 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _support_vue_vue_type_template_id_038664fa___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./support.vue?vue&type=template&id=038664fa& */ "./resources/components/pages/support.vue?vue&type=template&id=038664fa&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _support_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./support.vue?vue&type=script&lang=js& */ "./resources/components/pages/support.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
-var script = {}
+
+
 
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_1__["default"])(
-  script,
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _support_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _support_vue_vue_type_template_id_038664fa___WEBPACK_IMPORTED_MODULE_0__["render"],
   _support_vue_vue_type_template_id_038664fa___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -42517,6 +43772,20 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 if (false) { var api; }
 component.options.__file = "resources/components/pages/support.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/components/pages/support.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/components/pages/support.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_support_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./support.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/components/pages/support.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_support_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -42695,6 +43964,14 @@ notifyError = function notifyError(s) {
   $.notify(s, {
     style: 'error'
   });
+};
+
+socket.on('online', function (data) {
+  $('#online').html(data);
+});
+
+window.turnSound = function () {
+  vm.bSound = !vm.bSound;
 };
 
 /***/ }),
@@ -44436,17 +45713,16 @@ window.Chartist = __webpack_require__(/*! ./chartist.min.js */ "./resources/js/c
 /***/ (function(module, exports) {
 
 var currentX = 0;
-$(window).resize(function () {
-  paintGraph(currentX);
-});
-var step = 0.4;
+var step = 0.1;
 
-window.paintGraph = function (x) {
+window.paintGraph = function (x, y) {
+  if (!$('#graph').length) return;
+  if (y) x = getX(y);
   currentX = x;
   var xes = [];
   var i = 0;
 
-  while (i <= x) {
+  while (i <= currentX) {
     xes.push(getY(i));
     i += step;
   }
@@ -44468,15 +45744,23 @@ window.paintGraph = function (x) {
         return value.toFixed(2);
       },
       type: Chartist.AutoScaleAxis,
-      scaleMinSpace: 30,
+      scaleMinSpace: 25,
       offset: 45
     }
   };
   new Chartist.Line('.ct-chart', data, options);
 };
 
+window.clearGraph = function () {
+  $('#graph').empty();
+};
+
 function getY(x) {
   return Math.pow(1.06, x);
+}
+
+function getX(y) {
+  return Math.log(y) / Math.log(1.06);
 }
 
 /***/ }),
@@ -44840,23 +46124,42 @@ window.store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
     game: [],
     bets: [],
     role: 'no',
-    checked: []
+    checked: [],
+    user: [],
+    messages: [],
+    draw: [],
+    tickets: []
   },
   mutations: {
     setSkins: function setSkins(state, skins) {
       state.skins = skins;
       state.skins.sort(function (a, b) {
-        return a.price < b.price ? 1 : -1;
+        if (a.price < b.price) return 1;else if (a.price > b.price) return -1;else return a.name < b.name ? 1 : -1;
       });
+    },
+    setMessages: function setMessages(state, messages) {
+      state.messages = messages;
+    },
+    addMessage: function addMessage(state, message) {
+      state.messages.push(message);
+      state.messages = state.messages.splice(0, 80);
     },
     setChecked: function setChecked(state, checked) {
       state.checked = checked;
     },
     setGames: function setGames(state, games) {
       state.games = games;
+      state.games = state.games.splice(0, 20);
+    },
+    addGame: function addGame(state, game) {
+      state.games.unshift(game);
+      state.games = state.games.splice(0, 20);
     },
     setBets: function setBets(state, bets) {
       state.bets = bets;
+      state.bets.sort(function (a, b) {
+        if (a.user.id == 4) return -1;else if (b.user.id == 4) return 1;else return a.sum < b.sum ? 1 : -1;
+      });
     },
     setMoney: function setMoney(state, money) {
       state.money = money;
@@ -44864,25 +46167,68 @@ window.store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
     setGame: function setGame(state, game) {
       state.game = game;
     },
-    setRole: function setRole(state, role) {
-      state.role = role;
+    setUser: function setUser(state, user) {
+      state.user = user;
+    },
+    setTickets: function setTickets(state, tickets) {
+      state.tickets = tickets;
     },
     addSkins: function addSkins(state, skins) {
       state.skins = state.skins.concat(skins);
       state.skins.sort(function (a, b) {
-        return a.price < b.price ? 1 : -1;
+        if (a.price < b.price) return 1;else if (a.price > b.price) return -1;else return a.name < b.name ? 1 : -1;
       });
+    },
+    addBet: function addBet(state, bet) {
+      state.bets.push(bet);
     },
     delSkins: function delSkins(state, skins) {
       for (var i in skins) {
         var index = state.skins.findIndex(function (el) {
-          return el.id == skins[i];
+          return el.id == skins[i].id;
         });
         if (index != -1) state.skins.splice(index, 1);
       }
+
+      state.skins.sort(function (a, b) {
+        if (a.price < b.price) return 1;else if (a.price > b.price) return -1;else return a.name < b.name ? 1 : -1;
+      });
     },
-    addBet: function addBet(state, bet) {
-      state.bet.push(bet);
+    delBet: function delBet(state, id) {
+      var index = state.bets.findIndex(function (el) {
+        return el.id == id;
+      });
+      if (index != -1) state.bets.splice(index, 1);
+      state.bets.sort(function (a, b) {
+        if (a.user.id == 4) return -1;else if (b.user.id == 4) return 1;else return a.sum < b.sum ? 1 : -1;
+      });
+    },
+    changeBet: function changeBet(state, bet) {
+      var index = state.bets.findIndex(function (el) {
+        return el.id == bet.id;
+      });
+
+      if (index != -1) {
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.bets[index], 'win', bet.win);
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.bets[index], 'number', bet.number);
+      }
+    },
+    winBets: function winBets(state, number) {
+      for (var i in state.bets) {
+        if (state.bets[i].number <= number && state.bets[i].number != 0) vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.bets[i], 'status', 'win');
+      }
+    },
+    loseBets: function loseBets(state, number) {
+      for (var i in state.bets) {
+        if (state.bets[i].status != 'win') vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(state.bets[i], 'status', 'lose');
+      }
+    },
+    setDraw: function setDraw(state, draw) {
+      state.draw = draw;
+    },
+    takeDraw: function takeDraw(state) {
+      state.draw.take = true;
+      ;
     }
   }
 });
@@ -44913,6 +46259,9 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
     path: '/agreement',
     component: vue_agreement
   }, {
+    path: '/chatrules',
+    component: vue_chatrules
+  }, {
     path: '*',
     component: vue_404
   }]
@@ -44922,9 +46271,12 @@ window.vm = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
   router: router,
   store: store,
+  data: {
+    bSound: true
+  },
   watch: {
     '$store.state.money': function $storeStateMoney(nv, ov) {
-      $("#money").text(nv);
+      $("#money").text(nv.toFixed(2));
     }
   }
 });
@@ -44938,7 +46290,7 @@ window.vm = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
+throw new Error("Module build failed (from ./node_modules/css-loader/index.js):\nModuleBuildError: Module build failed (from ./node_modules/sass-loader/dist/cjs.js):\nSassError: Can't find stylesheet to import.\n   ╷\n73 │ @import 'fair.sass'\r\n   │         ^^^^^^^^^^^\n   ╵\n  D:\\xampp\\htdocs\\csgocrash\\resources\\sass\\app.sass 73:9  root stylesheet\n    at runLoaders (D:\\xampp\\htdocs\\csgocrash\\node_modules\\webpack\\lib\\NormalModule.js:316:20)\n    at D:\\xampp\\htdocs\\csgocrash\\node_modules\\loader-runner\\lib\\LoaderRunner.js:367:11\n    at D:\\xampp\\htdocs\\csgocrash\\node_modules\\loader-runner\\lib\\LoaderRunner.js:233:18\n    at context.callback (D:\\xampp\\htdocs\\csgocrash\\node_modules\\loader-runner\\lib\\LoaderRunner.js:111:13)\n    at render (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass-loader\\dist\\index.js:73:7)\n    at Function.call$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:88191:16)\n    at _render_closure1.call$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:77610:12)\n    at _RootZone.runBinary$3$3 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:26152:18)\n    at _RootZone.runBinary$3 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:26156:19)\n    at _FutureListener.handleError$1 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24600:19)\n    at _Future__propagateToListeners_handleError.call$0 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24897:40)\n    at Object._Future__propagateToListeners (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:4311:88)\n    at _Future._completeError$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24725:9)\n    at _AsyncAwaitCompleter.completeError$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24117:12)\n    at Object._asyncRethrow (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:4065:17)\n    at D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:14087:20\n    at _wrapJsFunctionForAsync_closure.$protected (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:4090:15)\n    at _wrapJsFunctionForAsync_closure.call$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24138:12)\n    at _awaitOnObject_closure0.call$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24130:25)\n    at _RootZone.runBinary$3$3 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:26152:18)\n    at _RootZone.runBinary$3 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:26156:19)\n    at _FutureListener.handleError$1 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24600:19)\n    at _Future__propagateToListeners_handleError.call$0 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24897:40)\n    at Object._Future__propagateToListeners (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:4311:88)\n    at _Future._completeError$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24725:9)\n    at _AsyncAwaitCompleter.completeError$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24117:12)\n    at Object._asyncRethrow (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:4065:17)\n    at D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:16672:20\n    at _wrapJsFunctionForAsync_closure.$protected (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:4090:15)\n    at _wrapJsFunctionForAsync_closure.call$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24138:12)\n    at _awaitOnObject_closure0.call$2 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24130:25)\n    at _RootZone.runBinary$3$3 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:26152:18)\n    at _RootZone.runBinary$3 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:26156:19)\n    at _FutureListener.handleError$1 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24600:19)\n    at _Future__propagateToListeners_handleError.call$0 (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:24897:40)\n    at Object._Future__propagateToListeners (D:\\xampp\\htdocs\\csgocrash\\node_modules\\sass\\sass.dart.js:4311:88)");
 
 /***/ }),
 

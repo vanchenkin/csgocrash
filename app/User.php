@@ -23,6 +23,16 @@ class User extends Authenticatable
         return $this->hasMany('App\Game');
     }
 
+    public function tickets()
+    {
+        return $this->hasMany('App\Ticket');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany('App\Message');
+    }
+
     public function bets()
     {
         return $this->hasMany('App\Bet');

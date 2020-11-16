@@ -18,11 +18,11 @@ class Bet extends Model
     }
     public function skins()
     {
-        return $this->belongsToMany('App\RSkin', 'bet_skin');
+        return $this->belongsToMany('App\RSkin', 'bet_skin')->withTimestamps();
     }
     public function calcBet(){
         $sum = 0;
-        foreach ($this->skins()->get() as $skin) {
+        foreach ($this->skins()->withoutGlobalScopes()->get() as $skin) {
             $sum += $skin->price;
         }
         return $sum;
@@ -30,6 +30,7 @@ class Bet extends Model
     public function winSkin(){
         $win = $this->number*$this->calcBet();
         $skin = Skin::where('price', '<=', $win)->orderBy('price', 'desc')->first();
+        $skin->price = $win;
         return $skin;
     }
 }

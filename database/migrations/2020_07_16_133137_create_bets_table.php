@@ -16,10 +16,10 @@ class CreateBetsTable extends Migration
         Schema::create('bets', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('game_id')->unsigned();
-            $table->foreign('game_id')->references('id')->on('games');
-            $table->double('number');
+            $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
+            $table->double('number', 10, 2);
             $table->enum('status', ['ingame', 'win', 'lose'])->default('ingame');
             $table->timestamps();
         });

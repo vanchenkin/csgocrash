@@ -1,0 +1,29 @@
+.accordion {
+  background-color: $c-sec;
+  color: $c-white;
+  cursor: pointer;
+  padding: 2rem;
+  width: 100%;
+  border: none;
+  text-align: left;
+  font-size: 1.7rem;
+  margin: 1rem 0;
+  outline: none;
+}
+
+.active, .accordion:hover {
+  background-color: $c-sec-hover;
+}
+
+.panel {
+  position: relative;
+  background-color: $c-sec;
+  color: $c-white;
+  font-weight: 400;
+  padding: 1.25rem;
+  font-size: 1.4rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: none;
+  margin-bottom: 1.5rem;
+}

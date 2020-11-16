@@ -20,8 +20,11 @@
                 <div class="header-logo">
                     <router-link :to="{ path: '/' }" class="logo"><img class="logo-img" src="{{ asset('img/logo.png') }}"></router-link>
                     <div class="logo-elems">
-                        <div class="logo-elem"><i class="fas fa-volume-up"></i></div>
-                        <div class="logo-elem">RU <i class="fas fa-sort-down logo-icon"></i></div>
+                        <div class="logo-elem" onclick="turnSound()"><i class="fas logo-volume" :class="{ 'fa-volume-up':bSound,'fa-volume-mute':!bSound  }"></i></div>
+                        <div class="logo-elem">
+                            RU <i class="fas fa-sort-down logo-icon"></i>
+                            <div class="logo-langs"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="header-main">
@@ -43,7 +46,7 @@
                         <a class="header-soc-item" href="/"><i class="fab fa-vk"></i></a>
                         <a class="header-soc-item" href="/"><i class="fab fa-telegram"></i></a>
                         <div class="header-soc-online">
-                            <span class="online-number"><i class="fas fa-circle online-circle" id="online-circle"></i> 2323</span>
+                            <span class="online-number"><i class="fas fa-circle online-circle" id="online-circle"></i> <span id="online">0</span></span>
                             <span class="online">ONLINE</span>
                         </div>
                     </div>
@@ -53,11 +56,13 @@
                         <a class="steam-button" href="{{ route('login') }}"><i class="fab fa-steam-symbol"></i><span>ВОЙТИ ЧЕРЕЗ STEAM<span></a>
                     @else
                         <div class="button header-right-button">ПОПОЛНИТЬ</div>
-                        <div class="header-right-nameblock">
-                            <div class="header-right-name">{{ Auth::user()->name }}</div>
-                            <div class="header-right-money">$<span id="money"></span></div>
-                        </div>
-                        <img class="header-right-image" src="{{ Auth::user()->image }}">
+                        <router-link :to="{ name: 'user', params: { id: {{ Auth::user()->id }} } }" class="header-right-user">
+                            <div class="header-right-nameblock">
+                                <div class="header-right-name">{{ Auth::user()->name }}</div>
+                                <div class="header-right-money">$<span id="money"></span></div>
+                            </div>
+                            <img class="header-right-image" src="{{ Auth::user()->image }}">
+                        </router-link>
                         <a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt header-right-icon"></i></a>
                     @endif
                 </div>
@@ -87,14 +92,26 @@
                 $(function() {
                     $("body").removeClass("preload");
                 });
-                @auth
-                    store.commit('setRole', '{{ Auth::user()->role }}');
-                @endauth
-                store.commit('setSkins', @json($skins));
+                @if(Auth::check())
+                    store.commit('setUser', {
+                        auth: true,
+                        role: '{{ Auth::user()->role }}',
+                        id: {{ Auth::user()->id }},
+                    });
+                @else
+                    store.commit('setUser', {
+                        auth: false,
+                        id: -1,
+                    });
+                @endif
                 store.commit('setMoney', parseFloat(@json($money)));
                 store.commit('setBets', @json($bets));
                 store.commit('setGames', @json($games));
                 store.commit('setGame', @json($game));
+                store.commit('setDraw', @json($draw));
+                store.commit('setSkins', @json($skins));
+                store.commit('setMessages', @json($messages));
+                store.commit('setTickets', @json($tickets));
             });
         </script>
     </body>

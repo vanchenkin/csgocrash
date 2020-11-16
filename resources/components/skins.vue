@@ -1,5 +1,5 @@
 <template>
-    <div class="skins-block">
+    <div class="skins-block" id="skins">
         <div class="skins-top">
             <div class="skins-m">
                 <div class="skins-bal">
@@ -16,10 +16,12 @@
         <div class="skins-items-wrapper">
             <div class="skins-items">
                 <div class="skins-item" v-for="(skin,id) in skins" :key="id">
-                    <input  type="checkbox" :id="skin.id" v-model="checked" :value="id" class="skins-input hidden" :disabled="(isBuy && remain < skin.price && checked.indexOf(id) != -1) || skin.status == 'bet'">
-                    <label  :for="skin.id" class="skins-label"  :class="{ disabled : (isBuy && remain < skin.price && checked.indexOf(id) != -1) || skin.status == 'bet'}">
+                    <input  type="checkbox" :id="id" v-model="checked" :value="id" class="skins-input hidden" :disabled="(isBuy && remain < skin.price && checked.indexOf(id) != -1) || skin.status == 'bet'">
+                    <label  :for="id" class="skins-label"  :class="{ disabled : (isBuy && remain < skin.price && checked.indexOf(id) != -1) || skin.ingame}">
                         <div class="skins-price">$ {{ skin.price.toFixed(2) }}</div>
-                        <img class="skins-image" :class="'r-'+skin.rarity" :src="skin.image">
+                        <span class="skins-image">
+                            <img :class="'r-'+skin.rarity" :src="skin.image">
+                        </span>
                         <div class="skins-weapon">{{ skin.weapon }}</div>
                         <div class="skins-name">{{ skin.name }}</div>
                         <div class="skins-quality">{{ skin.quality }}</div>
@@ -31,7 +33,7 @@
             <div class="button skins-button skins-gray" @click='withdraw'>ВЫВЕСТИ</div>
             <div class="button skins-button" @click='changeBuy'>ОБМЕНЯТЬ</div>
         </div>
-        <div id="skins-modal" class="skins-modal blur" :class="{ hidden: !isBuy }">
+        <div class="skins-modal blur" :class="{ hidden: !isBuy }">
             <div class="skins-modal-content">
                 <div class="skins-modal-top">
                     <div class="skins-ost">
@@ -39,7 +41,7 @@
                         <div class="skins-ost-value">$ {{ remain.toFixed(2) }}</div>
                     </div>
                     <div class="skins-sort">
-                        <input class="skins-sort-name skins-sort-input" type="text" placeholder="Введите название" v-model="name" @input="reload()">
+                        <input class="skins-sort-name skins-sort-input" type="text" placeholder="Введите название" v-model="query" @input="reload()">
                         <div class="skins-sort-price">
                             <input class="skins-sort-min skins-sort-input" type="text" placeholder="Мин.цена" v-model="min" @input="reload()">
                             <input class="skins-sort-max skins-sort-input" type="text" placeholder="Макс.цена" v-model="max" @input="reload()">
@@ -91,12 +93,12 @@
                 page: 1,
                 min: null,
                 max: null,
-                name: null,
+                query: '',
                 loading: true,
             };
         },
         computed: {
-            ...mapState(['role', 'skins', 'money']),
+            ...mapState(['user', 'skins', 'money']),
         },
         created() {
             $(() => {
@@ -108,7 +110,7 @@
                         }
                     });
                 $(document).mouseup((e) => {
-                    var div = $("#skins-modal");
+                    var div = $("#skins");
                     if (!div.is(e.target) && div.has(e.target).length === 0 && this.isBuy) {
                         this.changeBuy();
                     }
@@ -137,6 +139,9 @@
                     s += this.loadedSkins[newValue[i]].price;
                 this.remain = this.sum + this.money - s;
             },
+            '$store.state.checked'(nv){
+                this.checked = nv;
+            }
         },
         methods: {
             reload: function(){
@@ -148,18 +153,23 @@
                 this.loadMore();
             },
             checkAll: function(){
-                if(this.checked.length == this.skins.length)
+                var sum = 0;
+                for(var i in this.skins)
+                    if(!this.skins[i].ingame)
+                        sum++;
+                if(this.checked.length == sum)
                     this.checked = [];
                 else{
                     var a = [];
                     for(var i in this.skins)
-                        a.push(i)
+                        if(!this.skins[i].ingame)
+                            a.push(i)
                     this.checked = a;
                 }
             },
             changeBuy: function(){
                 if(this.isBuy == false){
-                    this.max = (this.sum + this.money).toFixed(2);
+                    this.max = (this.sum + this.money);
                     this.reload();
                 }
                 this.isBuy = !this.isBuy;
@@ -168,20 +178,25 @@
                 axios.get(APP_URL+'/api/skins/get?page='+this.page, {
                     params: {
                         min: this.min,
-                        max: this.max,
-                        name: this.name
+                        max: this.max?this.max:1000000000,
+                        query: this.query,
                     }
                 })
                 .then((req) => {
                     var pas = req.config.params;
-                    if(pas.max != this.max || pas.min != this.min || pas.name != this.name || req.data.current_page != this.page) return;
+                    if(pas.max != this.max || pas.min != this.min || pas.query != this.query || req.data.current_page != this.page) return;
                     this.loadedSkins = this.loadedSkins.concat(req.data.data);
                     this.page++;
                     this.loading = false;
-                })
+                }).catch(() => {
+                    notifyError('API error');
+                });
             },
             withdraw: function(){
-                console.log(this.min);
+                // if(req.data.type == 'success')
+                //     notifySuccess(req.data.text);
+                // else
+                //     notifyError(req.data.text);
             },
             buySkins: function(){
                 var tBuy = [], tSell = [];
@@ -197,9 +212,8 @@
                 })
                 .then((req) => {
                     if(req.data.type == 'error'){
-                        notifyError('ERROR');
+                        notifyError(req.data.text);
                     }else if(req.data.type == 'success'){
-                        notifySuccess('OK');
                         this.$store.commit('delSkins', req.data.del);
                         this.$store.commit('addSkins', req.data.add);
                         this.$store.commit('setMoney', req.data.money);
@@ -208,7 +222,7 @@
                     this.checked = [];
                 })
                 .catch(() => {
-                    notifyError('ERROR');
+                    notifyError('API error');
                 });
             }
         },

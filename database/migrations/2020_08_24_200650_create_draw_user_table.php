@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRskinsTable extends Migration
+class CreateDrawUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateRskinsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rskins', function (Blueprint $table) {
+        Schema::create('draw_user', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('draw_id')->unsigned();
+            $table->foreign('draw_id')->references('id')->on('draws')->onDelete('cascade');
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->bigInteger('skin_id')->unsigned();
-            $table->foreign('skin_id')->references('id')->on('skins')->onDelete('cascade');
-            $table->double('price', 10, 2);
-            $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ class CreateRskinsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rskins');
+        Schema::dropIfExists('draw_user');
     }
 }

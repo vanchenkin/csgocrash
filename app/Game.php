@@ -21,7 +21,7 @@ class Game extends Model
     public function calcBets()
     {
         $sum = 0;
-        foreach ($this->bets() as $bet) {
+        foreach ($this->bets()->get() as $bet) {
             $sum += $bet->calcBet();
         }
         return $sum;

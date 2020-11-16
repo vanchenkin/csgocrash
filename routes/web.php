@@ -6,18 +6,29 @@ Route::get('ll/{id}','MainController@debug');
 
 Route::group(['middleware' => 'auth'], function(){
     Route::group(['prefix' => 'api/crash'], function(){
-	    Route::any('bet', 'MainController@newBet');
-	    Route::any('stop', 'MainController@stopBet');
-	    Route::any('cancel', 'MainController@cancelBet');
+	    Route::get('bet', 'MainController@newBet');
+	    Route::get('stop', 'MainController@stopBet');
+	    Route::get('getWin', 'MainController@getWin');
+	    Route::get('cancel', 'MainController@cancelBet');
 	});
 	Route::group(['prefix' => 'api/skins'], function(){
-	    Route::any('get', 'SkinsController@get');
-	    Route::any('buy', 'SkinsController@buy');
+	    Route::get('get', 'SkinsController@get');
+	    Route::get('buy', 'SkinsController@buy');
+	});
+	Route::group(['prefix' => 'api/chat'], function(){
+	    Route::get('send', 'ChatController@send');
+	});
+	Route::group(['prefix' => 'api/ticket'], function(){
+	    Route::get('new', 'TicketController@new');
+	    Route::get('get', 'TicketController@get');
+	});
+	Route::group(['prefix' => 'api/draw'], function(){
+	    Route::get('take', 'DrawController@take');
 	});
 });
 
 Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function(){
-	Route::any('/', 'AdminController@index');
+	Route::get('/', 'AdminController@index');
 });
 
 

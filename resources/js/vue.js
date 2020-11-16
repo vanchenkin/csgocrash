@@ -20,20 +20,45 @@ window.store = new Vuex.Store({
         bets: [],
         role: 'no',
         checked: [],
+        user: [],
+        messages: [],
+        draw: [],
+        tickets: [],
     },
     mutations: {
         setSkins(state, skins){
             state.skins = skins
-            state.skins.sort((a,b) => (a.price < b.price) ? 1 : -1);
+            state.skins.sort((a,b) => {
+                if(a.price < b.price) return 1;
+                else if(a.price > b.price) return -1;
+                else return (a.name < b.name) ? 1 : -1;
+            });
+        },
+        setMessages(state, messages){
+            state.messages = messages;
+        },
+        addMessage(state, message){
+            state.messages.push(message);
+            state.messages = state.messages.splice(0, 80);
         },
         setChecked(state, checked){
             state.checked = checked;
         },
         setGames(state, games){
             state.games = games;
+            state.games = state.games.splice(0, 20);
+        },
+        addGame(state, game){
+            state.games.unshift(game);
+            state.games = state.games.splice(0, 20);
         },
         setBets(state, bets){
             state.bets = bets;
+            state.bets.sort((a,b) => {
+                if(a.user.id == 4) return -1;
+                else if(b.user.id == 4) return 1;
+                else return (a.sum < b.sum ? 1 : -1);
+            });
         },
         setMoney(state, money){
             state.money = money;
@@ -41,24 +66,75 @@ window.store = new Vuex.Store({
         setGame(state, game){
             state.game = game;
         },
-        setRole(state, role){
-            state.role = role;
+        setUser(state, user){
+            state.user = user;
+        },
+        setTickets(state, tickets){
+            state.tickets = tickets;
         },
         addSkins(state, skins){
             state.skins = state.skins.concat(skins);
-            state.skins.sort((a,b) => (a.price < b.price) ? 1 : -1);
+            state.skins.sort((a,b) => {
+                if(a.price < b.price) return 1;
+                else if(a.price > b.price) return -1;
+                else return (a.name < b.name) ? 1 : -1;
+            });
+        },
+        addBet(state, bet){
+            state.bets.push(bet);
         },
         delSkins(state, skins){
             for(var i in skins){
                 var index = state.skins.findIndex((el) => {
-                    return (el.id == skins[i]);
+                    return (el.id == skins[i].id);
                 });
                 if(index != -1)
                     state.skins.splice(index, 1);
             }
+            state.skins.sort((a,b) => {
+                if(a.price < b.price) return 1;
+                else if(a.price > b.price) return -1;
+                else return (a.name < b.name) ? 1 : -1;
+            });
         },
-        addBet(state, bet){
-            state.bet.push(bet);
+        delBet(state, id){
+            var index = state.bets.findIndex((el) => {
+                return (el.id == id);
+            });
+            if(index != -1)
+                state.bets.splice(index, 1);
+            state.bets.sort((a,b) => {
+                if(a.user.id == 4) return -1;
+                else if(b.user.id == 4) return 1;
+                else return (a.sum < b.sum ? 1 : -1);
+            });
+        },
+        changeBet(state, bet){
+            var index = state.bets.findIndex((el) => {
+                return (el.id == bet.id);
+            });
+            if(index != -1){
+                Vue.set(state.bets[index], 'win', bet.win);
+                Vue.set(state.bets[index], 'number', bet.number);
+            }
+        },
+        winBets(state, number){
+            for(var i in state.bets){
+                if(state.bets[i].number <= number && state.bets[i].number != 0)
+                    Vue.set(state.bets[i], 'status', 'win');
+            }
+        },
+        loseBets(state, number){
+            for(var i in state.bets){
+                if(state.bets[i].status != 'win')
+                    Vue.set(state.bets[i], 'status', 'lose');
+            }
+        },
+        setDraw(state, draw){
+            state.draw = draw;
+        },
+        takeDraw(state){
+            state.draw.take = true;;
         },
     }
 })
@@ -98,6 +174,10 @@ const router = new VueRouter({
             component: vue_agreement,
         },
         {
+            path: '/chatrules',
+            component: vue_chatrules,
+        },
+        {
             path: '*',
             component: vue_404,
         },
@@ -110,9 +190,12 @@ window.vm = new Vue({
     el: '#app',
     router,
     store,
+    data: {
+        bSound: true,
+    },
     watch: {
         '$store.state.money': function(nv, ov) {
-            $("#money").text(nv);
+            $("#money").text(nv.toFixed(2));
         },
     },
 });

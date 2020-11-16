@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('steamid64');
             $table->string('steamLink');
             $table->string('tradeLink')->nullable()->default(null);
-            $table->string('money')->default('0');
+            $table->double('money', 10, 2)->default('0');
             $table->string('refcode')->nullable()->default(null);
             $table->enum('role', ['admin', 'moderator', 'default', 'fake'])->default('default');
             $table->integer('chatBan')->default(0);

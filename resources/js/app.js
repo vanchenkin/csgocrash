@@ -4,7 +4,6 @@ window.socket = io.connect(':7777', {secure: true, 'force new connection': true}
 require('./graph.js');
 require('./vue.js');
 
-
 $.notify.addStyle('success', {
 	html: "<div><div class='notify notify-success'><span data-notify-text/></div></div>",
 });
@@ -23,4 +22,12 @@ notifyError = (s) => {
 	$.notify(s, {
 		style: 'error',
 	});
+}
+
+socket.on('online', (data) => {
+    $('#online').html(data);
+});
+
+window.turnSound = function() {
+	vm.bSound = !vm.bSound;
 }

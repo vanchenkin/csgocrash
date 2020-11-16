@@ -16,9 +16,9 @@ class CreateBetSkinTable extends Migration
         Schema::create('bet_skin', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('bet_id')->unsigned();
-            $table->foreign('bet_id')->references('id')->on('bets');
+            $table->foreign('bet_id')->references('id')->on('bets')->onDelete('cascade');
             $table->bigInteger('r_skin_id')->unsigned();
-            $table->foreign('r_skin_id')->references('id')->on('rskins');
+            $table->foreign('r_skin_id')->references('id')->on('rskins')->onDelete('cascade');
             $table->timestamps();
         });
     }

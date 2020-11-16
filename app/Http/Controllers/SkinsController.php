@@ -14,43 +14,38 @@ class SkinsController extends Controller
     public function get(Request $request){
 
         $min = 0;
-        if($request->has('min'))
-            $min = $request->input('min');
+        $min = (int)max($min, $request->input('min', 0));
         $max = 1e9;
-        if($request->has('max'))
-            $max = $request->input('max');
-        $name = '';
-        if($request->has('name'))
-            $name = $request->input('name');
-    	return Skin::where('price', '<=', $max)->where('price', '>=', $min)->orderBy('price', 'DESC')->simplePaginate(10);
+        $max = (int)min($max, $request->input('max', 1e9));
+        $query = '';
+        $query = $request->input('query', '');
+    	return Skin::where('price', '<=', $max)->where('price', '>=', $min)->where('name', 'LIKE', '%'.$query.'%')->orderBy('price', 'DESC')->simplePaginate(10);
     }
 
     public function buy(Request $request){
         $user = $request->user();
-        if($request->has('skins'))
-            $skins = json_decode($request->input('skins'));
-        else
-            return response()->json(['text' => 'Бdddубу. Бебеб', 'type' => 'error']);
+        $skins = json_decode($request->input('skins'));
         $sell = json_decode($request->input('sell'));
         foreach ($sell as $skin) {
-            if(!$user->skins()->where('id', $skin)->exists() || RSkin::find($skin)->status == 'bet')
-                return response()->json(['text' => 'adadБубу. Бебеб', 'type' => 'error']);
+            $tmp = $user->skins()->where('id', $skin)->first();
+            if(!is_numeric($skin) || !$tmp || $tmp->bets()->where('status', 'ingame')->count())
+                return response()->json(['text' => 'Error. Бебеб2', 'type' => 'error']);
         }
         foreach ($skins as $skin) {
             if(!Skin::where('id', $skin->id)->exists())
-                return response()->json(['text' => 'ddadadaБубу. Бебеб', 'type' => 'error']);
+                return response()->json(['text' => 'Error. Бебеб3', 'type' => 'error']);
             $tskin = Skin::find($skin->id);
             if($tskin->price != $skin->price)
-                return response()->json(['text' => 'dadaddadadaБубу. Бебеб', 'type' => 'error']);
+                return response()->json(['text' => 'Error. Бебеб4', 'type' => 'error']);
         }
-        $addSkins = array();
-        $delSkins = array();
+        $addSkins = [];
+        $delSkins = [];
         DB::transaction(function () use ($sell, $skins, $user, &$addSkins, &$delSkins) {
             $sum = 0;
             foreach ($sell as $skin) {
                 $rskin = RSkin::find($skin);
                 $sum += $rskin->price;
-                array_push($delSkins, $skin);
+                array_push($delSkins, ['id' => $skin]);
                 $rskin->delete();
             }
             foreach ($skins as $skin) {
@@ -65,10 +60,10 @@ class SkinsController extends Controller
                 array_push($addSkins, $tskin);
                 $sum -= $rskin->price;
             }
-            if($user->money + $sum < 0)  throw new Exception('Money less than zero');
+            if($user->money + $sum < 0)  throw new Exception();
             $user->money += $sum;
             $user->save();
         });
-        return response()->json(['text' => 'Действие выполнено.', 'type' => 'success', 'add' => $addSkins, 'del' => $delSkins, 'money' => $user->money]);
+        return response()->json(['text' => 'Completed.', 'type' => 'success', 'add' => $addSkins, 'del' => $delSkins, 'money' => $user->money]);
     }
 }

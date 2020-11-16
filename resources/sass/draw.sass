@@ -1,0 +1,90 @@
+.draw
+	display: grid
+	grid-template-rows: 3rem 1fr auto auto
+	width: 100%
+	background-color: $c-sec
+	border-radius: 0 $border-radius 0 0
+	padding: 2rem
+	.draw-header
+		display: flex
+		justify-content: space-evenly
+		align-items: center
+		margin-bottom: 1rem
+		.draw-header-text
+			font-size: 1.4rem
+			font-weight: 700
+			margin: 0 1rem
+		.draw-header-time
+			color: $c-orange
+			font-size: 1.7rem
+		.draw-header-icon
+			font-size: 2.2rem
+	$draw-body-height: 15rem
+	.draw-body
+		display: flex
+		justify-content: space-evenly
+		height: $draw-body-height
+		.draw-body-image
+			height: $draw-body-height
+		.draw-body-r
+			display: flex
+			flex-direction: column
+			align-items: center
+			justify-content: center
+			.draw-body-text
+				font-size: 1.5rem
+			.draw-body-stext
+				font-size: 1.25rem
+				color: $c-orange
+				margin-top: 0.5rem
+				text-align: center
+			.draw-body-ttext
+				font-size: 1.25rem
+				color: $c-orange
+				margin-top: 0.25rem
+				text-align: center
+			.disabled
+				background-color: $c-main
+				pointer-events: none
+			.draw-body-button
+				margin-top: 2rem
+				padding: 2rem
+				font-size: 1.5rem
+				font-weight: 700
+	.draw-no
+		height: $draw-body-height
+		font-size: 1.3rem
+		display: flex
+		align-items: center
+		justify-content: center
+		text-align: center
+		line-height: 1.5
+		flex-direction: column
+		.draw-no-icon
+			margin-bottom: 1rem
+			font-size: 3rem
+	.draw-count
+		border-radius: 0.5rem
+		background-color: $c-main
+		display: flex
+		align-items: center
+		justify-content: space-between
+		padding: 1rem 1.5rem
+		font-size: 1.4rem
+		width: 35rem
+		margin: 0 auto
+		margin-bottom: 1rem
+	.draw-last
+		border-radius: 0.5rem
+		background-color: $c-main
+		display: flex
+		align-items: center
+		justify-content: space-between
+		font-size: 1.4rem
+		padding: 1rem 1.5rem
+		width: 35rem
+		margin: 0 auto
+		.draw-last-image
+			width: 4rem
+			height: 4rem
+			border-radius: 1rem
