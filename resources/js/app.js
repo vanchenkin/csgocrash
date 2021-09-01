@@ -1,6 +1,6 @@
 require('./bootstrap');
 
-window.socket = io.connect(process.env.MIX_CRASH_HOST+':'+process.env.MIX_CRASH_PORT, {secure: true, 'force new connection': true});
+window.socket = io.connect(process.env.MIX_CRASH_HOST, {secure: true, 'force new connection': true});
 require('./graph.js');
 require('./vue.js');
 
