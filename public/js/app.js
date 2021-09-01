@@ -43177,7 +43177,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-window.socket = io.connect(':7777', {
+window.socket = io.connect("" + ':' + "7777", {
   secure: true,
   'force new connection': true
 });
