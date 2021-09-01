@@ -1,9 +1,9 @@
 var config  = require('./config.js'),
     io = require('socket.io')(config.port),
     redisClient   = require('redis').createClient({
-        host: '127.0.0.1',
-        //password: '',
-        port: 6379,
+        host: process.env.REDIS_HOST,
+        password: process.env.REDIS_PASSWORD,
+        port: process.env.REDIS_PORT,
     }),
     req = require('requestify');
 
