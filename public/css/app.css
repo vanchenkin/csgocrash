@@ -1,38 +1,31 @@
 @import url(https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;
 
 600;700;800);.r-white {
-  -webkit-filter: drop-shadow(0 0 0.5rem #979797);
-          filter: drop-shadow(0 0 0.5rem #979797);
+  filter: drop-shadow(0 0 0.5rem #979797);
 }
 
 .r-lightblue {
-  -webkit-filter: drop-shadow(0 0 0.5rem #99ccff);
-          filter: drop-shadow(0 0 0.5rem #99ccff);
+  filter: drop-shadow(0 0 0.5rem #99ccff);
 }
 
 .r-blue {
-  -webkit-filter: drop-shadow(0 0 0.5rem #4747ff);
-          filter: drop-shadow(0 0 0.5rem #4747ff);
+  filter: drop-shadow(0 0 0.5rem #4747ff);
 }
 
 .r-purple {
-  -webkit-filter: drop-shadow(0 0 0.5rem #8848ff);
-          filter: drop-shadow(0 0 0.5rem #8848ff);
+  filter: drop-shadow(0 0 0.5rem #8848ff);
 }
 
 .r-pink {
-  -webkit-filter: drop-shadow(0 0 0.5rem #ff14ff);
-          filter: drop-shadow(0 0 0.5rem #ff14ff);
+  filter: drop-shadow(0 0 0.5rem #ff14ff);
 }
 
 .r-red {
-  -webkit-filter: drop-shadow(0 0 0.5rem red);
-          filter: drop-shadow(0 0 0.5rem red);
+  filter: drop-shadow(0 0 0.5rem red);
 }
 
 .r-knife {
-  -webkit-filter: drop-shadow(0 0 0.5rem #ffd11b);
-          filter: drop-shadow(0 0 0.5rem #ffd11b);
+  filter: drop-shadow(0 0 0.5rem #ffd11b);
 }
 
 .cf-red {
@@ -76,8 +69,7 @@
 }
 
 .blur {
-  -webkit-filter: drop-shadow(0 0 0.8rem rgba(207, 81, 0, 0.7));
-          filter: drop-shadow(0 0 0.8rem rgba(207, 81, 0, 0.7));
+  filter: drop-shadow(0 0 0.8rem rgba(207, 81, 0, 0.7));
 }
 
 .ct-label {
@@ -1267,7 +1259,6 @@ input:focus {
 
 .skins .skins-block .skins-items-wrapper .skins-items .skins-item .skins-label .skins-image {
   width: 8rem;
-  height: 7rem;
 }
 
 .skins .skins-block .skins-items-wrapper .skins-items .skins-item .skins-label .skins-image img {
@@ -1421,8 +1412,7 @@ input:focus {
 }
 
 .content-block .upper .left .graph .graph-number {
-  -webkit-filter: drop-shadow(0 0 1rem rgba(207, 81, 0, 0.8));
-          filter: drop-shadow(0 0 1rem rgba(207, 81, 0, 0.8));
+  filter: drop-shadow(0 0 1rem rgba(207, 81, 0, 0.8));
   position: absolute;
   z-index: 2;
   width: 100%;
@@ -2111,6 +2101,11 @@ input:focus {
   border-radius: 1rem;
 }
 
+.support .support-guest {
+  font-size: 1.5rem;
+  padding: 2rem;
+}
+
 .accordion {
   background-color: #202326;
   color: #DBDBDB;
@@ -2515,8 +2510,7 @@ main {
   width: -webkit-min-content;
   width: -moz-min-content;
   width: min-content;
-  -webkit-filter: drop-shadow(0 0 0.8rem rgba(207, 81, 0, 0.7));
-          filter: drop-shadow(0 0 0.8rem rgba(207, 81, 0, 0.7));
+  filter: drop-shadow(0 0 0.8rem rgba(207, 81, 0, 0.7));
 }
 
 * {

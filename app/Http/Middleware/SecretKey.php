@@ -8,9 +8,8 @@ class SecretKey
 {
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($request->secretKey == env('SECRET_KEY')) {
+        if ($request->secretKey == env('SECRET_KEY'))
             return $next($request);
-        }
         return abort('404');
     }
 }

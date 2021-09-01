@@ -15,7 +15,6 @@ redisClient.on("pmessage", function(pattern, channel, message) {
     message = JSON.parse(message);
     if(channel == 'crash.bet'){
         io.sockets.emit('newBet', message);
-		console.log('bet amount '+message.sum);
     }
     if(channel == 'crash.stop'){
         io.sockets.emit('stopBet', message);
@@ -31,7 +30,7 @@ redisClient.on("pmessage", function(pattern, channel, message) {
     }
 });
 
-var timer, ngtimer, game, online=0;
+var timer, ngtimer, game, online = 0;
 io.on('connection', function(socket) {
     online+=1;
     io.sockets.emit('online', online);
@@ -46,7 +45,7 @@ function startTimer() {
     clearInterval(timer);
     timer = setInterval(function () {
         x = x + 0.1;
-        var num  = config.func(x);
+        var num  = config.crashFunction(x);
         if(num >= game.number){
             io.sockets.emit('crashGraph', game.number);
             console.log('x = '+game.number);
@@ -54,10 +53,11 @@ function startTimer() {
     		finishGame();
             return;
     	}
-        console.log('x = '+config.func(x));
-        io.sockets.emit('crashGraph', config.func(x));
+        console.log('x = '+config.crashFunction(x));
+        io.sockets.emit('crashGraph', config.crashFunction(x));
     }, 100);
 }
+
 function startNGTimer(){
     var time = config.timeLeft;
     clearInterval(ngtimer);
@@ -72,6 +72,7 @@ function startNGTimer(){
         }
     }, 100);
 }
+
 function getCurrentGame(){
     req.post(config.domain+'/api/crash/getCurrentGame', {
         secretKey: config.secretKey
@@ -86,6 +87,7 @@ function getCurrentGame(){
         setTimeout(getCurrentGame, 1000);
     });
 }
+
 function newGame(){
     req.post(config.domain+'/api/crash/newGame', {
         secretKey: config.secretKey
@@ -103,6 +105,7 @@ function newGame(){
         setTimeout(newGame, 1000);
     });
 }
+
 function finishGame(){
     req.post(config.domain+'/api/crash/finishGame', {
         secretKey: config.secretKey
@@ -120,6 +123,7 @@ function finishGame(){
         setTimeout(finishGame, 1000);
     });
 }
+
 function startGame(status){
     req.post(config.domain+'/api/crash/startGame', {
         secretKey: config.secretKey
@@ -132,5 +136,6 @@ function startGame(status){
         setTimeout(startGame, 1000);
     });
 }
+
 if(config.game)
     getCurrentGame();

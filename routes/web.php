@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+//manual login debug route
 Route::get('ll/{id}','MainController@debug');
 
+//user api
 Route::group(['middleware' => 'auth'], function(){
     Route::group(['prefix' => 'api/crash'], function(){
 	    Route::get('bet', 'MainController@newBet');
@@ -20,7 +22,6 @@ Route::group(['middleware' => 'auth'], function(){
 	});
 	Route::group(['prefix' => 'api/ticket'], function(){
 	    Route::get('new', 'TicketController@new');
-	    Route::get('get', 'TicketController@get');
 	});
 	Route::group(['prefix' => 'api/draw'], function(){
 	    Route::get('take', 'DrawController@take');
@@ -31,18 +32,13 @@ Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function(){
 	Route::get('/', 'AdminController@index');
 });
 
-
-
-//AUTH
+//steam auth
 Route::get('auth/steam', 'SteamController@redirectToSteam')->name('login');
 Route::get('auth/steam/handle', 'SteamController@handle');
 Route::get('auth/logout', 'SteamController@logout')->name('logout');
 
-Route::get('bb', 'MainController@bb');
-
+//SPA
 Route::any('api/{all}', function () {
     return abort(404);
 })->where('all', '.*');
-
-//SPA
 Route::any('{all}', 'MainController@index')->where('all', '.*');

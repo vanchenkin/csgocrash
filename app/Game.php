@@ -8,6 +8,7 @@ class Game extends Model
 {
     protected $table = 'games';
     public $hash;
+
 	public function bets()
     {
         return $this->hasMany('App\Bet');
@@ -26,5 +27,4 @@ class Game extends Model
         }
         return $sum;
     }
-
 }

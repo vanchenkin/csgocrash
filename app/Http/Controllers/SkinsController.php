@@ -12,7 +12,6 @@ class SkinsController extends Controller
 {
 
     public function get(Request $request){
-
         $min = 0;
         $min = (int)max($min, $request->input('min', 0));
         $max = 1e9;
@@ -29,14 +28,14 @@ class SkinsController extends Controller
         foreach ($sell as $skin) {
             $tmp = $user->skins()->where('id', $skin)->first();
             if(!is_numeric($skin) || !$tmp || $tmp->bets()->where('status', 'ingame')->count())
-                return response()->json(['text' => 'Error. Бебеб2', 'type' => 'error']);
+                return response()->json(['text' => 'Error. 2', 'type' => 'error']);
         }
         foreach ($skins as $skin) {
             if(!Skin::where('id', $skin->id)->exists())
-                return response()->json(['text' => 'Error. Бебеб3', 'type' => 'error']);
+                return response()->json(['text' => 'Error. 3', 'type' => 'error']);
             $tskin = Skin::find($skin->id);
             if($tskin->price != $skin->price)
-                return response()->json(['text' => 'Error. Бебеб4', 'type' => 'error']);
+                return response()->json(['text' => 'Error. 4', 'type' => 'error']);
         }
         $addSkins = [];
         $delSkins = [];

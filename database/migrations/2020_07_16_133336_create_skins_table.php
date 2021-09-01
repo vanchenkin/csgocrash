@@ -20,7 +20,7 @@ class CreateSkinsTable extends Migration
             $table->string('quality');
             $table->enum('rarity', ['white', 'lightblue', 'blue', 'purple', 'pink', 'red', 'knife']);
             $table->boolean('stattrak');
-            $table->string('image');
+            $table->string('image', 200);
             $table->double('price', 10, 2);
             $table->timestamps();
         });

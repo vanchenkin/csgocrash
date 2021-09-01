@@ -23,7 +23,6 @@ class DatabaseSeeder extends Seeder
                 'money' => 1000,
                 'role' => 'admin',
             ]);
-        $rarity = ['white', 'lightblue', 'blue', 'purple', 'pink', 'red', 'knife'];
         for ($i = 0; $i < 50; $i++){
             DB::table('messages')->insert([
                 'user_id' => 1,
@@ -31,6 +30,18 @@ class DatabaseSeeder extends Seeder
                 'created_at' => Carbon::now(),
             ]);
         }
+        $rarity = ['white', 'lightblue', 'blue', 'purple', 'pink', 'red', 'knife'];
+        $randomSkinsArray = [
+            'http://localhost/csgocrash/img/skin1.png',
+            'http://localhost/csgocrash/img/skin2.png',
+            'http://localhost/csgocrash/img/skin3.png',
+            'http://localhost/csgocrash/img/skin4.png',
+            'http://localhost/csgocrash/img/skin5.png',
+            'http://localhost/csgocrash/img/skin6.png',
+            'http://localhost/csgocrash/img/skin7.png',
+            'http://localhost/csgocrash/img/skin8.png',
+            'http://localhost/csgocrash/img/skin9.png',
+        ];
         for ($i = 0; $i < 500; $i++){
             DB::table('skins')->insert([
                 'weapon' => Str::random(20),
@@ -38,15 +49,15 @@ class DatabaseSeeder extends Seeder
                 'quality' => 'WW',
                 'stattrak' => (rand(0,1) == 1),
                 'rarity' => $rarity[rand(0, count($rarity)-1)],
-                'image' => 'http://localhost/csgocrash/img/skin.png',
+                'image' => $randomSkinsArray[array_rand($randomSkinsArray)],
                 'price' => mt_rand(2, 1000),
             ]);
         }
-        DB::table('draws')->insert([
-            'skin_id' => 1,
-            'time' => 1800,
-            'created_at' => Carbon::now(),
-        ]);
+        // DB::table('draws')->insert([
+        //     'skin_id' => 1,
+        //     'time' => 1800,
+        //     'created_at' => Carbon::now(),
+        // ]);
         DB::table('tickets')->insert([
             'user_id' => 1,
             'name' => "12321",
