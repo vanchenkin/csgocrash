@@ -105,7 +105,6 @@
                 let el = document.querySelector('#modal-items');
                 if(el)
                     el.addEventListener('scroll', () => {
-                        console.log(el.scrollTop, el.clientHeight, el.scrollHeight);
                         if (el.scrollTop + el.clientHeight >= el.scrollHeight - 5) {
                             this.loadMore();
                         }

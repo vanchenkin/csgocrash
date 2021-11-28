@@ -32,15 +32,15 @@ class DatabaseSeeder extends Seeder
         }
         $rarity = ['white', 'lightblue', 'blue', 'purple', 'pink', 'red', 'knife'];
         $randomSkinsArray = [
-            'http://localhost/csgocrash/img/skin1.png',
-            'http://localhost/csgocrash/img/skin2.png',
-            'http://localhost/csgocrash/img/skin3.png',
-            'http://localhost/csgocrash/img/skin4.png',
-            'http://localhost/csgocrash/img/skin5.png',
-            'http://localhost/csgocrash/img/skin6.png',
-            'http://localhost/csgocrash/img/skin7.png',
-            'http://localhost/csgocrash/img/skin8.png',
-            'http://localhost/csgocrash/img/skin9.png',
+            'img/skin1.png',
+            'img/skin2.png',
+            'img/skin3.png',
+            'img/skin4.png',
+            'img/skin5.png',
+            'img/skin6.png',
+            'img/skin7.png',
+            'img/skin8.png',
+            'img/skin9.png',
         ];
         for ($i = 0; $i < 500; $i++){
             DB::table('skins')->insert([
